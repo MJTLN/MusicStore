@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create_purchase_issue_entity" author="admin">
+        <createTable tableName="PURCHASE_ISSUE">
+            <column name="ID" type="BIGINT" autoIncrement="true"/>
+            <column name="DESCRIPTION" type="VARCHAR"/>
+            <column name="PURCHASE_ID" type="BIGINT"/>
+            <column name="CREATED_AT" type="TIME"/>
+            <column name="UPDATED_AT" type="TIME"/>
+            <column name="STATUS" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

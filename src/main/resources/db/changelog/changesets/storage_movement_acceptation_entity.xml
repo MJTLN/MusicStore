@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="storage_movement_acceptation_entity.xml" author="admin">
+        <createTable tableName="STORAGE_MOVEMENT">
+            <column name="ID" type="BIGINT" autoIncrement="true"/>
+            <column name="CURRENT_STORAGE_ID" type="BIGINT"/>
+            <column name="NEW_STORAGE_ID" type="BIGINT"/>
+            <column name="STATUS" type="VARCHAR"/>
+            <column name="NOTE" type="VARCHAR"/>
+            <column name="SHIPMENT_STATUS" type="VARCHAR"/>
+        </createTable>
+
+        <createTable tableName="STORAGE_MOVEMENT_ITEM">
+            <column name="ID" type="BIGINT" autoIncrement="true"/>
+            <column name="PRODUCT_ID" type="BIGINT"/>
+            <column name="STORAGE_MOVEMENT_ACCEPTATION_ID" type="BIGINT"/>
+            <column name="QUANTITY" type="BIGINT"/>
+            <column name="ACCEPTED" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

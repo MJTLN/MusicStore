@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <include file="db/changelog/changesets/initial_changeset.xml"/>
+    <include file="db/changelog/changesets/product_productDetail_new_fields.xml"/>
+    <include file="db/changelog/changesets/inventory_changes.xml"/>
+    <include file="db/changelog/changesets/link_shipments_with_storage.xml"/>
+    <include file="db/changelog/changesets/supplier_entity_changes.xml"/>
+    <include file="db/changelog/changesets/product_label_table.xml"/>
+    <include file="db/changelog/changesets/add_inventory_location_shipment_relationship.xml"/>
+    <include file="db/changelog/changesets/warehouse_location_entity.xml"/>
+    <include file="db/changelog/changesets/storage_movement_acceptation_entity.xml"/>
+    <include file="db/changelog/changesets/issue_entity.xml"/>
+
+</databaseChangeLog>
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="supplier_entity_changes" author="admin">
+        <addColumn tableName="SUPPLIER">
+            <column name="OFFICIAL_ADDRESS" type="varchar"/>
+            <column name="CONTACT_INFO" type="varchar"/>
+        </addColumn>
+
+        <renameColumn tableName="SUPPLIER" oldColumnName="NAME" newColumnName="COMPANY_NAME"/>
+    </changeSet>
+
+</databaseChangeLog>

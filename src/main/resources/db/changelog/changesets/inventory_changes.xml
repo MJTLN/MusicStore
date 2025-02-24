@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="inventory_entity_changes" author="maciej">
+        <createTable tableName="STORAGE">
+            <column name="ID" autoIncrement="true" type="BIGINT"/>
+            <column name="TYPE" type="varchar(255)"/>
+            <column name="ADDRESS" type="varchar(1000)"/>
+        </createTable>
+
+        <dropColumn tableName="INVENTORY" columnName="TYPE"/>
+        <dropColumn tableName="INVENTORY" columnName="ADDRESS"/>
+
+        <addColumn tableName="INVENTORY">
+            <column name="STORAGE_ID" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
+

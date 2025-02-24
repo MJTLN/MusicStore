@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="0" author="admin">
+        <dropColumn tableName="PURCHASE" columnName="ADDRESS_ID"/>
+        <dropForeignKeyConstraint baseTableName="PURCHASE" constraintName="FK_PURCHASE_ADDRESS"/>
+        <addColumn tableName="PURCHASE">
+            <column name="country" type="varchar"/>
+            <column name="city" type="varchar"/>
+            <column name="street" type="varchar"/>
+            <column name="house" type="varchar"/>
+            <column name="apartment" type="varchar"/>
+            <column name="phone" type="varchar"/>
+            <column name="mail" type="varchar"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

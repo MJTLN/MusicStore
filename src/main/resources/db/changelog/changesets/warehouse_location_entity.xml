@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="warehouse_location_entity.xml" author="admin">
+        <createTable tableName="WAREHOUSE_LOCATION">
+            <column name="ID" type="BIGINT" autoIncrement="true"/>
+            <column name="INVENTORY_ID" type="BIGINT"/>
+            <column name="STORAGE_ID" type="BIGINT"/>
+            <column name="SECTION" type="NUMERIC"/>
+            <column name="AISLE" type="NUMERIC"/>
+            <column name="RACK" type="NUMERIC"/>
+            <column name="SHELF" type="NUMERIC"/>
+            <column name="POSITION" type="NUMERIC"/>
+            <column name="QUANTITY" type="NUMERIC"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="maciej">
+        <createTable tableName="ADDRESS">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USER_ID" type="BIGINT"/>
+            <column name="COUNTRY" type="VARCHAR"/>
+            <column name="CITY" type="VARCHAR"/>
+            <column name="STREET" type="VARCHAR"/>
+            <column name="HOUSE" type="VARCHAR"/>
+            <column name="APARTMENT" type="VARCHAR"/>
+            <column name="PHONE" type="VARCHAR"/>
+            <column name="MAIL" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="maciej">
+        <createTable tableName="CATEGORY">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR"/>
+            <column name="PARENT_ID" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="maciej">
+        <createTable tableName="DETAIL_FIELD">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="maciej">
+        <createTable tableName="DISCOUNT">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="IS_FIXED_AMOUNT" type="BOOLEAN"/>
+            <column name="AMOUNT" type="BIGINT"/>
+            <column name="NAME" type="VARCHAR"/>
+            <column name="SALE_ID" type="BIGINT"/>
+            <column name="START_DATE" type="TIMESTAMP"/>
+            <column name="END_DATE" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+<!--
+    <changeSet id="5" author="maciej">
+        <createTable tableName="INVENTORY">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="QUANTITY" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    -->
+    <changeSet id="6" author="maciej">
+        <createTable tableName="INVENTORY">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TYPE" type="VARCHAR"/>
+            <column name="QUANTITY" type="INTEGER"/>
+            <column name="ADDRESS" type="VARCHAR"/>
+            <column name="PRODUCT_ID" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="maciej">
+        <createTable tableName="PAYMENT">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="PURCHASE_ID" type="BIGINT"/>
+            <column name="USER_ID" type="BIGINT"/>
+            <column name="PAYMENT_STATUS" type="VARCHAR"/>
+            <column name="CREATED_AT" type="TIMESTAMP"/>
+            <column name="UPDATED_AT" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="8" author="maciej">
+        <createTable tableName="PRODUCT">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR"/>
+            <column name="PRICE" type="NUMERIC"/>
+            <column name="UPC" type="BIGINT"/>
+            <column name="DISCOUNT_ID" type="BIGINT"/>
+            <column name="CREATED_AT" type="TIMESTAMP"/>
+            <column name="UPDATED_AT" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="9" author="maciej">
+        <createTable tableName="PRODUCT_DETAIL">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="PRODUCT_ID" type="BIGINT"/>
+            <column name="FIELD_ID" type="BIGINT"/>
+            <column name="VALUE" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="10" author="maciej">
+        <createTable tableName="PURCHASE">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USER_ID" type="BIGINT"/>
+            <column name="AMOUNT" type="DECIMAL"/>
+            <column name="PAYMENT_ID" type="BIGINT"/>
+            <column name="PURCHASE_STATUS" type="VARCHAR"/>
+            <column name="SHIPMENT_STATUS" type="VARCHAR"/>
+            <column name="SHIPPER" type="VARCHAR"/>
+            <column name="COUNTRY" type="VARCHAR"/>
+            <column name="CITY" type="VARCHAR"/>
+            <column name="STREET" type="VARCHAR"/>
+            <column name="HOUSE" type="VARCHAR"/>
+            <column name="APARTMENT" type="VARCHAR"/>
+            <column name="PHONE" type="VARCHAR"/>
+            <column name="MAIL" type="VARCHAR"/>
+            <column name="CREATED_AT" type="TIMESTAMP"/>
+            <column name="UPDATED_AT" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="11" author="maciej">
+        <createTable tableName="SALE">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="DESCRIPTION" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="12" author="maciej">
+        <createTable tableName="SUPPLIER">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="13" author="maciej">
+        <createTable tableName="SUPPLIER_SHIPMENT">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="SUPPLIER_ID" type="BIGINT"/>
+            <column name="CREATED_AT" type="TIMESTAMP"/>
+            <column name="ARRIVAL_TIME" type="TIMESTAMP"/>
+            <column name="AMOUNT" type="DECIMAL"/>
+            <column name="STATUS" type="VARCHAR"/>
+            <column name="NOTE" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="14" author="maciej">
+        <createTable tableName="SUPPLIER_SHIPMENT_ITEM">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="PRODUCT_ID" type="BIGINT"/>
+            <column name="SHIPMENT_ID" type="BIGINT"/>
+            <column name="QUANTITY" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="15" author="maciej">
+        <createTable tableName="APP_USER">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USERNAME" type="VARCHAR"/>
+            <column name="PASSWORD" type="VARCHAR"/>
+            <column name="PHONE" type="VARCHAR"/>
+            <column name="EMAIL" type="VARCHAR"/>
+            <column name="ROLE" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="16" author="maciej">
+        <addForeignKeyConstraint baseTableName="ADDRESS"
+                                 baseColumnNames="USER_ID"
+                                 constraintName="FK_ADDRESS_USER"
+                                 referencedTableName="APP_USER"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="17" author="maciej">
+        <addForeignKeyConstraint baseTableName="CATEGORY"
+                                 baseColumnNames="PARENT_ID"
+                                 constraintName="FK_CATEGORY_PARENT"
+                                 referencedTableName="CATEGORY"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="18" author="maciej">
+        <addForeignKeyConstraint baseTableName="DISCOUNT"
+                                 baseColumnNames="SALE_ID"
+                                 constraintName="FK_DISCOUNT_SALE"
+                                 referencedTableName="SALE"
+                                 referencedColumnNames="ID"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+
+
+    <changeSet id="21" author="maciej">
+        <addForeignKeyConstraint baseTableName="PAYMENT"
+                                 baseColumnNames="PURCHASE_ID"
+                                 constraintName="FK_PAYMENT_PURCHASE"
+                                 referencedTableName="PURCHASE"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="22" author="maciej">
+        <addForeignKeyConstraint baseTableName="PAYMENT"
+                                 baseColumnNames="USER_ID"
+                                 constraintName="FK_PAYMENT_USER"
+                                 referencedTableName="APP_USER"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="23" author="maciej">
+        <addForeignKeyConstraint baseTableName="PRODUCT"
+                                 baseColumnNames="DISCOUNT_ID"
+                                 constraintName="FK_PRODUCT_DISCOUNT"
+                                 referencedTableName="DISCOUNT"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+
+    <changeSet id="25" author="maciej">
+        <addForeignKeyConstraint baseTableName="PRODUCT_DETAIL"
+                                 baseColumnNames="PRODUCT_ID"
+                                 constraintName="FK_PRODUCT_DETAIL_PRODUCT"
+                                 referencedTableName="PRODUCT"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="26" author="maciej">
+        <addForeignKeyConstraint baseTableName="PRODUCT_DETAIL"
+                                 baseColumnNames="FIELD_ID"
+                                 constraintName="FK_PRODUCT_DETAIL_FIELD"
+                                 referencedTableName="DETAIL_FIELD"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="27" author="maciej">
+        <addForeignKeyConstraint baseTableName="PURCHASE"
+                                 baseColumnNames="USER_ID"
+                                 constraintName="FK_PURCHASE_USER"
+                                 referencedTableName="APP_USER"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="29" author="maciej">
+        <addForeignKeyConstraint baseTableName="SUPPLIER_SHIPMENT"
+                                 baseColumnNames="SUPPLIER_ID"
+                                 constraintName="FK_SUPPLIER_SHIPMENT_SUPPLIER"
+                                 referencedTableName="SUPPLIER"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="30" author="maciej">
+        <addForeignKeyConstraint baseTableName="SUPPLIER_SHIPMENT_ITEM"
+                                 baseColumnNames="PRODUCT_ID"
+                                 constraintName="FK_SUPPLIER_SHIPMENT_ITEM_PRODUCT"
+                                 referencedTableName="PRODUCT"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="31" author="maciej">
+        <addForeignKeyConstraint baseTableName="SUPPLIER_SHIPMENT_ITEM"
+                                 baseColumnNames="SHIPMENT_ID"
+                                 constraintName="FK_SUPPLIER_SHIPMENT_ITEM_SHIPMENT"
+                                 referencedTableName="SUPPLIER_SHIPMENT"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="32" author="maciej">
+        <createTable tableName="category_product">
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="category_product" baseColumnNames="category_id"
+                referencedTableName="category" referencedColumnNames="id"
+                constraintName="fk_category_product_category"/>
+
+        <addForeignKeyConstraint
+                baseTableName="category_product" baseColumnNames="product_id"
+                referencedTableName="product" referencedColumnNames="id"
+                constraintName="fk_category_product_product"/>
+
+        <createTable tableName="PURCHASE_PRODUCTS">
+            <column name="PURCHASE_ID" type="BIGINT"/>
+            <column name="PRODUCT_ID" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
