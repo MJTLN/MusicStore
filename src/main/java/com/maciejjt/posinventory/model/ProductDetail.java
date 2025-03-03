@@ -3,9 +3,7 @@ package com.maciejjt.posinventory.model;
     import jakarta.persistence.*;
     import lombok.*;
 
-    import java.util.Objects;
-
-    @Entity
+@Entity
     @Data
     @Builder
     @NoArgsConstructor

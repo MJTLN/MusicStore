@@ -30,4 +30,24 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException e) {
+        ApiError apiError = ApiError.builder()
+                .message(e.getMessage())
+                .time(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiError);
+    }
+
+    @ExceptionHandler(StorageNotEmptiedException.class)
+    public ResponseEntity<ApiError> handleStorageNotEmptiedException(StorageNotEmptiedException e) {
+        ApiError apiError = ApiError.builder()
+                .message(e.getMessage())
+                .time(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
+    }
+
 }

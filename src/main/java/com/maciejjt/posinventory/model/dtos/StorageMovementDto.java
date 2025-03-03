@@ -1,10 +1,7 @@
 package com.maciejjt.posinventory.model.dtos;
 
-import com.maciejjt.posinventory.model.Storage;
-import com.maciejjt.posinventory.model.StorageMovementItem;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import com.maciejjt.posinventory.model.enums.StorageMovementStatus;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

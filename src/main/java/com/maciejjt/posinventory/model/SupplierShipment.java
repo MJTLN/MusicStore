@@ -1,6 +1,5 @@
 package com.maciejjt.posinventory.model;
 
-import com.maciejjt.posinventory.model.enums.PaymentStatus;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import jakarta.persistence.*;
 import lombok.*;

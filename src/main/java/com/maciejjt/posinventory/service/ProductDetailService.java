@@ -3,11 +3,9 @@ package com.maciejjt.posinventory.service;
 import com.maciejjt.posinventory.model.DetailField;
 import com.maciejjt.posinventory.model.Product;
 import com.maciejjt.posinventory.model.ProductDetail;
-import com.maciejjt.posinventory.repository.DetailFieldRepository;
 import com.maciejjt.posinventory.repository.ProductDetailRepository;
 import jakarta.transaction.Transactional;
 import lombok.Data;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

@@ -1,11 +1,13 @@
 package com.maciejjt.posinventory.model;
 
+import com.maciejjt.posinventory.model.enums.SaleStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -21,4 +23,8 @@ public class Sale {
     private String description;
     @OneToMany(mappedBy = "sale")
     private Set<Discount> discounts;
+    private Boolean isAggregating;
+    private SaleStatus status;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }

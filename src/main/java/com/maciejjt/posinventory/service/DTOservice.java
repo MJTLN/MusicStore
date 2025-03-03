@@ -2,6 +2,7 @@ package com.maciejjt.posinventory.service;
 
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.api.dtos.ApiProductDto;
+import com.maciejjt.posinventory.model.api.dtos.CartDto;
 import com.maciejjt.posinventory.model.api.dtos.PurchaseDto;
 import com.maciejjt.posinventory.model.dtos.*;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
@@ -317,6 +318,9 @@ public class DTOservice {
                 .name(sale.getName())
                 .description(sale.getDescription())
                 .discounts(discountDtos)
+                .type(sale.getIsAggregating())
+                .startDate(sale.getStartDate())
+                .endDate(sale.getEndDate())
                 .build();
     }
 
@@ -357,6 +361,9 @@ public class DTOservice {
                 .name(sale.getName())
                 .id(sale.getId())
                 .products(productListingDtos)
+                .type(sale.getIsAggregating())
+                .startDate(sale.getStartDate())
+                .endDate(sale.getEndDate())
                 .build();
     }
 
@@ -449,6 +456,19 @@ public class DTOservice {
                 .status(storageMovement.getStatus())
                 .movementItems(storageMovementItemDtos)
                 .note(storageMovement.getNote())
+                .build();
+    }
+
+    public CartDto buildCartDto(Cart cart) {
+        Map<ProductListingDtoShort, Integer> products = new HashMap<>();
+        cart.getProducts().forEach(cartProduct -> {
+            products.put(
+                    buildProductListingDtoShort(cartProduct.getProduct()),
+                    cartProduct.getQuantity());
+        });
+        return CartDto.builder()
+                .id(cart.getId())
+                .products(products)
                 .build();
     }
 }

@@ -63,6 +63,12 @@ public class AdminDiscountController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/sale/{saleId}")
+    public ResponseEntity<Void> endSale(@PathVariable Long saleId) {
+        discountService.endSale(saleId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/sale/{saleId}")
     public ResponseEntity<SaleDto> findSaleById(@PathVariable Long saleId) {
         return ResponseEntity.ok(discountService.getSaleById(saleId));
@@ -79,8 +85,8 @@ public class AdminDiscountController {
     }
 
     @DeleteMapping("/sale/{id}")
-    public ResponseEntity<Void> deleteSale(@PathVariable Long id, boolean withDiscounts) {
-        discountService.deleteSale(id,true);
+    public ResponseEntity<Void> deleteSale(@PathVariable Long id, @RequestParam boolean deleteDiscounts, @RequestBody List<Long> discountsExcludedFromDeletion) {
+        discountService.deleteSale(id, deleteDiscounts, discountsExcludedFromDeletion);
         return ResponseEntity.ok().build();
     }
 

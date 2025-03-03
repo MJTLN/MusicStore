@@ -1,13 +1,11 @@
 package com.maciejjt.posinventory.model.api.dtos;
 
 import com.maciejjt.posinventory.model.dtos.DiscountDto;
-import com.maciejjt.posinventory.model.dtos.InventoryDto;
 import com.maciejjt.posinventory.model.dtos.ProductDetailDto;
 import com.maciejjt.posinventory.model.enums.ProductLabel;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data

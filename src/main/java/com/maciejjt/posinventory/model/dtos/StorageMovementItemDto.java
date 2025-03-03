@@ -1,8 +1,5 @@
 package com.maciejjt.posinventory.model.dtos;
 
-import com.maciejjt.posinventory.model.Product;
-import com.maciejjt.posinventory.model.StorageMovement;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

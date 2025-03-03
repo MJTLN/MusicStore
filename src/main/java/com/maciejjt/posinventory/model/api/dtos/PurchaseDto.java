@@ -1,14 +1,9 @@
 package com.maciejjt.posinventory.model.api.dtos;
 
-import com.maciejjt.posinventory.model.Payment;
-import com.maciejjt.posinventory.model.Product;
-import com.maciejjt.posinventory.model.User;
-import com.maciejjt.posinventory.model.dtos.ProductListingDto;
 import com.maciejjt.posinventory.model.dtos.ProductListingDtoShort;
 import com.maciejjt.posinventory.model.enums.PaymentStatus;
 import com.maciejjt.posinventory.model.enums.PurchaseStatus;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 

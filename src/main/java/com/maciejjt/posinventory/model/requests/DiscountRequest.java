@@ -1,8 +1,5 @@
 package com.maciejjt.posinventory.model.requests;
 
-import com.maciejjt.posinventory.model.Product;
-import com.maciejjt.posinventory.model.Sale;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 

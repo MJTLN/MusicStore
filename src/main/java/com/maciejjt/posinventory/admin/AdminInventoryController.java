@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @Data
 @RequestMapping("/admin")
-public class  AdminInventoryController {
+public class   AdminInventoryController {
 
     private final InventoryService inventoryService;
     private final ProductService productService;

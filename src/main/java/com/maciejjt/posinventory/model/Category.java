@@ -1,6 +1,5 @@
 package com.maciejjt.posinventory.model;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 

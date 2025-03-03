@@ -28,11 +28,7 @@ public class DatabaseSeeder {
    private final ProductService productService;
    private final StorageRepository storageRepository;
    private final DetailFieldRepository detailFieldRepository;
-   private final InventoryRepository inventoryRepository;
    private final SupplierRepository supplierRepository;
-   private final WarehouseLocationRepository warehouseLocationRepository;
-   private final ShipmentRepository shipmentRepository;
-   private final SupplierShipmentItemRepository supplierShipmentItemRepository;
    private final InventoryService inventoryService;
    private final UserRepository userRepository;
    private final PasswordEncoder passwordEncoder;

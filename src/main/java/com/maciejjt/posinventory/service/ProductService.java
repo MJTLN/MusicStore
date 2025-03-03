@@ -3,11 +3,14 @@ package com.maciejjt.posinventory.service;
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.api.dtos.ApiProductDto;
+import com.maciejjt.posinventory.model.api.dtos.CartDto;
 import com.maciejjt.posinventory.model.dtos.*;
 import com.maciejjt.posinventory.model.requests.ProductRequest;
 import com.maciejjt.posinventory.model.requests.ProductSearchRequest;
 import com.maciejjt.posinventory.model.enums.ProductLabel;
 import com.maciejjt.posinventory.model.specifications.ProductSpecification;
+import com.maciejjt.posinventory.repository.CartProductRepository;
+import com.maciejjt.posinventory.repository.CartRepository;
 import com.maciejjt.posinventory.repository.ProductRepository;
 import com.maciejjt.posinventory.repository.StorageRepository;
 import jakarta.transaction.Transactional;
@@ -30,6 +33,8 @@ public class ProductService {
     private final InventoryService inventoryService;
     private final ProductDetailService productDetailService;
     private final DTOservice dtOservice;
+    private final CartProductRepository cartProductRepository;
+    private final CartRepository cartRepository;
 
     @Transactional
     public Product createProduct(ProductRequest productRequest) {
@@ -141,5 +146,77 @@ public class ProductService {
     public ApiProductDto findApiProductById(Long id) {
         Product product = findProductById(id);
         return dtOservice.buildApiProductDto(product);
+    }
+
+    @Transactional
+    public void addToCart(Long productId, Integer quantity, User user) {
+
+        Cart cart = user.getCart();
+
+        Optional<CartProduct> existingCartProduct = cart.getProducts().stream()
+                .filter(cartProduct -> cartProduct.getProduct().getId().equals(productId))
+                .findFirst();
+
+        if (existingCartProduct.isPresent()) {
+
+            CartProduct cartProduct = existingCartProduct.get();
+            cartProduct.addQuantity(quantity);
+            cartProductRepository.save(cartProduct);
+
+        } else {
+
+            Product product = findProductById(productId);
+
+            CartProduct newCartProduct = CartProduct.builder()
+                    .product(product)
+                    .quantity(quantity)
+                    .cart(cart)
+                    .build();
+
+            CartProduct cartProduct = cartProductRepository.save(newCartProduct);
+
+            cart.getProducts().add(cartProduct);
+            cartRepository.save(cart);
+        }
+    }
+
+    public CartDto getCartByUser(User user) {
+        Cart cart = user.getCart();
+        return dtOservice.buildCartDto(cart);
+    }
+
+    @Transactional
+    public void updateCartProductQuantity(Long productId, boolean addOrRemove, Integer quantity, User user) {
+
+        Cart cart = user.getCart();
+        Optional<CartProduct> cartProduct = cart.getProducts().stream()
+                .filter(entry -> entry.getProduct().getId().equals(productId))
+                .findFirst();
+
+        if (cartProduct.isEmpty()) {
+            throw new EntityNotFoundException("No product in cart with id " + productId);
+        }
+
+        if (addOrRemove) {
+            cartProduct.get().addQuantity(quantity);
+        } else {
+            cartProduct.get().removeQuantity(quantity);
+        }
+
+        cartProductRepository.save(cartProduct.get());
+    }
+
+    @Transactional
+    public void deleteProductFromCart(Long productId, User user) {
+        Cart cart = user.getCart();
+        Optional<CartProduct> cartProduct = cart.getProducts().stream()
+                .filter(entry -> entry.getProduct().getId().equals(productId))
+                .findFirst();
+
+        cartProduct.ifPresent(product -> {
+                    cart.getProducts().remove(product);
+                    cartProductRepository.delete(product);
+                }
+        );
     }
 }

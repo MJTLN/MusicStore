@@ -10,8 +10,6 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.maciejjt.posinventory.model.Product;
-import com.maciejjt.posinventory.model.ProductDetail;
 public class ProductSpecification {
     public static Specification<Product> filterByDetails(ProductSearchRequest request) {
         return (root, query, criteriaBuilder) -> {

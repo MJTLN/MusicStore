@@ -4,6 +4,7 @@ import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.dtos.DiscountDto;
 import com.maciejjt.posinventory.model.dtos.SaleDtoWithProducts;
+import com.maciejjt.posinventory.model.enums.SaleStatus;
 import com.maciejjt.posinventory.model.requests.DiscountRequest;
 import com.maciejjt.posinventory.model.dtos.SaleDto;
 import com.maciejjt.posinventory.model.requests.SaleRequest;
@@ -15,7 +16,9 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -118,16 +121,38 @@ public class DiscountService {
     }
 
     @Transactional
-    public void deleteSale(Long id, boolean withDiscounts) {
+    public void endSale(Long saleId) {
+        Sale sale = findSaleById(saleId);
+        sale.setStatus(SaleStatus.FINISHED);
+
+        sale.getDiscounts().forEach(discount -> {
+            discount.setSale(null);
+            if (!sale.getIsAggregating()) {
+                discount.setActive(false);
+                Product product = discount.getProduct();
+                product.setDiscount(null);
+                productRepository.save(product);
+            }
+            discountRepository.save(discount);
+            });
+
+        sale.setEndDate(LocalDateTime.now());
+        saleRepository.save(sale);
+    }
+
+    @Transactional
+    public void deleteSale(Long id, boolean withDiscounts, List<Long> discountsExcludedFromDeletion) {
 
         Sale sale = findSaleById(id);
 
         if (withDiscounts) {
             sale.getDiscounts().forEach(discount -> {
-                Product product = discount.getProduct();
-                product.setDiscount(null);
-                productRepository.save(product);
-                discountRepository.delete(discount);
+                if (!discountsExcludedFromDeletion.contains(discount.getId())) {
+                    Product product = discount.getProduct();
+                    product.setDiscount(null);
+                    productRepository.save(product);
+                    discountRepository.delete(discount);
+                }
             });
         }
 
@@ -152,6 +177,14 @@ public class DiscountService {
 
         return dtOservice.buildSaleDto(saleRepository.save(sale));
     }
+
+    public Set<SaleDtoWithProducts> getCurrentSales() {
+        List<Sale> currentSales = saleRepository.findSalesByStatus(SaleStatus.IN_PROGRESS);
+        return currentSales.stream()
+                .map(dtOservice::buildSaleDtoWithProducts)
+                .collect(Collectors.toSet());
+    }
+
 
     public SaleDtoWithProducts getSaleDtoWithProducts(Long id) {
         Sale sale = findSaleById(id);

@@ -13,13 +13,12 @@ import com.maciejjt.posinventory.model.requests.PurchaseCompletingRequest;
 import com.maciejjt.posinventory.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -39,9 +38,39 @@ public class PurchaseService {
     public PurchaseDto createPurchase(PurchaseRequest purchaseRequest, User user) {
 
         Set<Product> products =  new HashSet<>(productRepository.findAllById(purchaseRequest.getProductIds()));
+
         BigDecimal amount = products.stream()
-                .map(Product::getPrice)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .map( product -> {
+                    BigDecimal price = product.getPrice();
+                    if (product.getDiscount() != null) {
+                        if (product.getDiscount().isFixedAmount()) {
+                            price = price.subtract(new BigDecimal(product.getDiscount().getAmount()));
+                        } else {
+                            BigDecimal multiplicator = BigDecimal.ONE.subtract(new BigDecimal(product.getDiscount().getAmount()));
+                            price = price.multiply(multiplicator);
+                        }
+                    }
+                    return price;
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+
+        /*
+        products.forEach(product -> {
+            BigDecimal price = product.getPrice();
+
+            if (product.getDiscount() != null) {
+                if (product.getDiscount().isFixedAmount()) {
+                    BigDecimal multiplicator = BigDecimal.valueOf(product.getDiscount().getAmount());
+                    price = price.multiply(multiplicator);
+                } else {
+                    BigDecimal subtractor = BigDecimal.valueOf(product.getDiscount().getAmount());
+                    price = price.subtract(subtractor);
+                }
+            }
+
+            amount = amount.add(price);
+        });*/
 
         Purchase purchase = purchaseRepository.save(Purchase.builder()
                 .purchaseStatus(PurchaseStatus.COMPLETING)
@@ -50,7 +79,6 @@ public class PurchaseService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .shipper(purchaseRequest.getShipper())
-                //ADD LATER WHEN ADDING SECURITY!!!
                 .user(user)
                 .country(purchaseRequest.getCountry())
                 .city(purchaseRequest.getCity())
@@ -161,5 +189,11 @@ public class PurchaseService {
 
     public PurchaseIssue findPurchaseIssueById(Long id) {
         return purchaseIssueRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Issue not found with id " + id));
+    }
+
+    public Set<PurchaseDto> getUserPurchases(User user) {
+        return user.getPurchases().stream()
+                .map(dtOservice::buildPurchaseDto)
+                .collect(Collectors.toSet());
     }
 }

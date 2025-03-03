@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="add_cart_entity" author="admin">
+        <createTable tableName="CART">
+            <column name="ID" type="BIGINT" autoIncrement="true" />
+            <column name="USER_ID" type="BIGINT"/>
+        </createTable>
+
+        <addPrimaryKey columnNames="ID" tableName="CART" constraintName="PK_CART"/>
+
+        <addForeignKeyConstraint baseTableName="CART" baseColumnNames="USER_ID" constraintName="USER_ID_FK" referencedTableName="APP_USER"
+                                 referencedColumnNames="ID"/>
+
+        <createTable tableName="CART_PRODUCT">
+            <column name="ID" type="BIGINT" autoIncrement="true"/>
+            <column name="PRODUCT_ID" type="BIGINT"/>
+            <column name="CART_ID" type="BIGINT"/>
+            <column name="QUANTITY" type="NUMERIC"/>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>

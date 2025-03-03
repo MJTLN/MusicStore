@@ -1,6 +1,7 @@
 package com.maciejjt.posinventory.service;
 
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
+import com.maciejjt.posinventory.exceptions.StorageNotEmptiedException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.dtos.*;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
@@ -246,7 +247,7 @@ public class InventoryService {
     public void deleteStorageById(Long storageId) {
         Storage storage = findStorageById(storageId);
         if (!storage.getInventories().isEmpty()) {
-            throw new RuntimeException("CLEAR INVENTORY FIRST");
+            throw new StorageNotEmptiedException("CLEAR INVENTORY FIRST");
         } else {
             storageRepository.delete(storage);
         }

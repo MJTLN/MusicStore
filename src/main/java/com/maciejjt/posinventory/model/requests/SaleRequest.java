@@ -1,13 +1,9 @@
 package com.maciejjt.posinventory.model.requests;
 
-import com.maciejjt.posinventory.model.Discount;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -16,4 +12,7 @@ public class SaleRequest {
     private String name;
     private String description;
     private Set<Long> discountIds;
+    private Boolean type;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }

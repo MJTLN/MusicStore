@@ -1,7 +1,6 @@
 package com.maciejjt.posinventory.model.requests;
 
 import com.maciejjt.posinventory.model.enums.ProductLabel;
-import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Data;
 

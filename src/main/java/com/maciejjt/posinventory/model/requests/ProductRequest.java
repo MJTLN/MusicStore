@@ -4,7 +4,6 @@ import com.maciejjt.posinventory.model.enums.ProductLabel;
 import lombok.Builder;
 import lombok.Data;
 
-import java.awt.*;
 import java.util.Map;
 import java.util.Set;
 
