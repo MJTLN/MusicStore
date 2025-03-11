@@ -6,7 +6,9 @@
 
     <changeSet id="inventory_entity_changes" author="maciej">
         <createTable tableName="STORAGE">
-            <column name="ID" autoIncrement="true" type="BIGINT"/>
+            <column name="ID" autoIncrement="true" type="INTEGER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
             <column name="TYPE" type="varchar(255)"/>
             <column name="ADDRESS" type="varchar(1000)"/>
         </createTable>
@@ -15,7 +17,7 @@
         <dropColumn tableName="INVENTORY" columnName="ADDRESS"/>
 
         <addColumn tableName="INVENTORY">
-            <column name="STORAGE_ID" type="BIGINT"/>
+            <column name="STORAGE_ID" type="INTEGER"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

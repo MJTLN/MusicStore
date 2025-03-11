@@ -6,10 +6,10 @@
 
     <changeSet id="add_inventory_location_shipment_relationship.xml" author="admin">
         <createTable tableName="INVENTORY_SHIPMENT">
-            <column name="INVENTORY_ID" type="BIGINT">
+            <column name="INVENTORY_ID" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
-            <column name="SUPPLIER_SHIPMENT_ID" type="BIGINT">
+            <column name="SUPPLIER_SHIPMENT_ID" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
         </createTable>

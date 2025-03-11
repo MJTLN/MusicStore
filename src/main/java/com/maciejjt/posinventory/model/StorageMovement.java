@@ -5,6 +5,7 @@ import com.maciejjt.posinventory.model.enums.StorageMovementStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Builder
@@ -28,4 +29,6 @@ public class StorageMovement {
     String note;
     StorageMovementStatus status;
     ShipmentStatus shipmentStatus;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Data
@@ -62,8 +63,8 @@ public class   AdminInventoryController {
     }
 
     @PostMapping("/shipment/{shipmentId}/finalize")
-    public ResponseEntity<Void> finalizeShipment(@PathVariable Long shipmentId) {
-        inventoryService.finalizeShipment(shipmentId);
+    public ResponseEntity<Void> finalizeShipment(@PathVariable Long shipmentId, @RequestBody Set<PositionRequest> positions) {
+        inventoryService.finalizeShipment(shipmentId, positions);
         return ResponseEntity.ok().build();
     }
 
@@ -152,8 +153,8 @@ public class   AdminInventoryController {
     }
 
     @PostMapping("/movement/{movementId}/finalize")
-    public ResponseEntity<StorageDto> finalizeMovement(@PathVariable Long movementId) {
-        return ResponseEntity.ok(inventoryService.finalizeMovement(movementId));
+    public ResponseEntity<StorageDto> finalizeMovement(@PathVariable Long movementId, @RequestBody Set<PositionRequest> positions) {
+        return ResponseEntity.ok(inventoryService.finalizeMovement(movementId, positions));
     }
 
     @PostMapping("/movement/{movementId}/accept")
@@ -162,8 +163,8 @@ public class   AdminInventoryController {
     }
 
     @PostMapping("/movement/{movementId}/send")
-    public ResponseEntity<Void> sendMovement(@PathVariable Long movementId) {
-        inventoryService.sendMovement(movementId);
+    public ResponseEntity<Void> sendMovement(@PathVariable Long movementId, @RequestBody Set<PositionRequest> positions) {
+        inventoryService.sendMovement(movementId, positions);
         return ResponseEntity.ok().build();
     }
 
@@ -178,10 +179,10 @@ public class   AdminInventoryController {
         inventoryService.changeMovementShipping(movementId, shipmentStatus);
         return ResponseEntity.ok().build();
     }
-
+/*
     //WAREHOUSE LOCATIONS
     @PostMapping("/warehouseLocation/{inventoryLocationId}")
     public ResponseEntity<InventoryLocationDto> addWarehouseLocation(@PathVariable Long inventoryLocationId, @RequestBody WarehouseLocationRequest warehouseLocationRequest) {
         return ResponseEntity.ok(inventoryService.addWarehouseLocation(inventoryLocationId, warehouseLocationRequest));
-    }
+    }*/
 }

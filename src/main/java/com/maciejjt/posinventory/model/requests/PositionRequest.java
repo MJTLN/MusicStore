@@ -3,7 +3,7 @@ package com.maciejjt.posinventory.model.requests;
 import lombok.Data;
 
 @Data
-public class PurchaseCompletingStock {
-    Long warehouseLocationId;
+public class PositionRequest {
+    Long positionId;
     Integer amount;
 }

@@ -7,5 +7,5 @@ import java.util.Map;
 @Data
 public class PurchaseCompletingRequest {
     Long purchaseId;
-    Map<Long, PurchaseCompletingStock> productStock;
+    Map<Long, PositionRequest> productStock;
 }

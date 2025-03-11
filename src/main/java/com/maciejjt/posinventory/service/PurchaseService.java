@@ -1,6 +1,7 @@
 package com.maciejjt.posinventory.service;
 
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
+import com.maciejjt.posinventory.exceptions.WarehouseConflictException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.api.dtos.PurchaseDto;
 import com.maciejjt.posinventory.model.api.requests.PurchaseIssueRequest;
@@ -10,6 +11,7 @@ import com.maciejjt.posinventory.model.enums.PurchaseIssueStatus;
 import com.maciejjt.posinventory.model.enums.PurchaseStatus;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import com.maciejjt.posinventory.model.requests.PurchaseCompletingRequest;
+import com.maciejjt.posinventory.model.warehouse.Position;
 import com.maciejjt.posinventory.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -28,11 +30,11 @@ public class PurchaseService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
-    private final WarehouseLocationRepository warehouseLocationRepository;
+   // private final WarehouseLocationRepository warehouseLocationRepository;
     private final InventoryRepository inventoryRepository;
     private final DTOservice dtOservice;
     private final PurchaseIssueRepository purchaseIssueRepository;
-
+    private final PositionRepository positionRepository;
 
     @Transactional
     public PurchaseDto createPurchase(PurchaseRequest purchaseRequest, User user) {
@@ -42,7 +44,7 @@ public class PurchaseService {
         BigDecimal amount = products.stream()
                 .map( product -> {
                     BigDecimal price = product.getPrice();
-                    if (product.getDiscount() != null) {
+                    if (product.getDiscount() != null && product.getDiscount().isActive()) {
                         if (product.getDiscount().isFixedAmount()) {
                             price = price.subtract(new BigDecimal(product.getDiscount().getAmount()));
                         } else {
@@ -54,23 +56,6 @@ public class PurchaseService {
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-
-        /*
-        products.forEach(product -> {
-            BigDecimal price = product.getPrice();
-
-            if (product.getDiscount() != null) {
-                if (product.getDiscount().isFixedAmount()) {
-                    BigDecimal multiplicator = BigDecimal.valueOf(product.getDiscount().getAmount());
-                    price = price.multiply(multiplicator);
-                } else {
-                    BigDecimal subtractor = BigDecimal.valueOf(product.getDiscount().getAmount());
-                    price = price.subtract(subtractor);
-                }
-            }
-
-            amount = amount.add(price);
-        });*/
 
         Purchase purchase = purchaseRepository.save(Purchase.builder()
                 .purchaseStatus(PurchaseStatus.COMPLETING)
@@ -138,19 +123,23 @@ public class PurchaseService {
         Purchase purchase = findPurchaseById(purchaseCompletingRequest.getPurchaseId());
 
         purchaseCompletingRequest.getProductStock().forEach((key,value) -> {
-            WarehouseLocation warehouseLocation = warehouseLocationRepository.findById(value.getWarehouseLocationId())
-                    .orElseThrow(() -> new EntityNotFoundException("Warehouse location not found with id " + value.getWarehouseLocationId()));
-            //REFACTOR THIS  XD
-            if(!key.equals(warehouseLocation.getInventory().getProduct().getId())) {
-                warehouseLocation.removeQuantity(value.getAmount());
-                Inventory inventory = warehouseLocation.getInventory();
+           Position position = positionRepository.findById(value.getPositionId())
+                    .orElseThrow(() -> new EntityNotFoundException("Position not found with id " + value.getPositionId()));
+            if (key.equals(position.getInventory().getProduct().getId())) {
+                if (position.getQuantity() < value.getAmount()) {
+                    throw new RuntimeException("Not enough quantity in this position");
+                }
+                position.removeQuantity(value.getAmount());
+                if (position.getQuantity() == 0) {
+                    position.setInventory(null);
+                }
+                Inventory inventory = position.getInventory();
                 inventory.removeQuantity(value.getAmount());
 
-                warehouseLocationRepository.save(warehouseLocation);
+                positionRepository.save(position);
                 inventoryRepository.save(inventory);
-
             } else {
-                throw new RuntimeException("Provided warehouse location contains other product than specified.");
+                throw new WarehouseConflictException("Provided warehouse position contains other product than specified.");
             }
         });
 

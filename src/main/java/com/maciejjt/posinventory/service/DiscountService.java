@@ -109,6 +109,26 @@ public class DiscountService {
         return dtOservice.buildDiscountDto(discountRepository.save(discount));
     }
 
+    @Transactional
+    public void endDiscount(Long discountId) {
+        Discount discount = findDiscountById(discountId);
+        discount.setActive(false);
+        Product product = discount.getProduct();
+        product.setDiscount(null);
+        productRepository.save(product);
+        discountRepository.save(discount);
+    }
+
+    @Transactional
+    public void endDiscount(Discount discount) {
+        discount.setActive(false);
+        Product product = discount.getProduct();
+        product.setDiscount(null);
+        productRepository.save(product);
+        discountRepository.save(discount);
+    }
+
+
     public DiscountDto getDiscountById(Long id) {
         Discount discount = findDiscountById(id);
         return dtOservice.buildDiscountDto(discount);
@@ -126,12 +146,13 @@ public class DiscountService {
         sale.setStatus(SaleStatus.FINISHED);
 
         sale.getDiscounts().forEach(discount -> {
-            discount.setSale(null);
             if (!sale.getIsAggregating()) {
                 discount.setActive(false);
                 Product product = discount.getProduct();
                 product.setDiscount(null);
                 productRepository.save(product);
+            } else {
+                discount.setSale(null);
             }
             discountRepository.save(discount);
             });

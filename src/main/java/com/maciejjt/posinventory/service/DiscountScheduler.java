@@ -1,8 +1,10 @@
 package com.maciejjt.posinventory.service;
 
+import com.maciejjt.posinventory.model.Discount;
 import com.maciejjt.posinventory.model.Sale;
 import com.maciejjt.posinventory.model.enums.SaleStatus;
 import com.maciejjt.posinventory.repository.DiscountRepository;
+import com.maciejjt.posinventory.repository.ProductRepository;
 import com.maciejjt.posinventory.repository.SaleRepository;
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -19,30 +21,58 @@ public class DiscountScheduler {
     private final DiscountRepository discountRepository;
     private final SaleRepository saleRepository;
     private final DiscountService discountService;
+    private final ProductRepository productRepository;
 
     @Scheduled(cron = "0 0 * * * ?")
     @Transactional
     public void updateSales() {
-
         List<Sale> salesToStart = saleRepository.findSaleByStatusAndStartDateIsAfter(SaleStatus.UPCOMING, LocalDateTime.now());
 
         salesToStart.forEach(
                 sale -> {
                     sale.setStatus(SaleStatus.IN_PROGRESS);
+                    if (sale.getIsAggregating()) {
+                        sale.getDiscounts().forEach(discount -> {
+                            discount.setActive(true);
+                            discountRepository.save(discount);
+                        });
+                    }
                     saleRepository.save(sale);
                 }
         );
 
         List<Sale> salesToEnd = saleRepository.findSaleByStatusAndEndDateIsAfter(SaleStatus.IN_PROGRESS, LocalDateTime.now());
 
-        salesToStart.forEach(
+        salesToEnd.forEach(
                 sale -> {
                     discountService.endSale(sale.getId());
                 }
         );
-
-
     }
+
+    @Scheduled(cron = "0 0 * * * ?")
+    @Transactional
+    public void updateDiscounts() {
+        List<Discount> discountsToStart = discountRepository.findDiscountByActiveAndStartDateIsAfter(false, LocalDateTime.now());
+
+        discountsToStart.forEach(
+                discount -> {
+                    discount.setActive(true);
+                    discountRepository.save(discount);
+                }
+        );
+
+        List<Discount> discountsToEnd = discountRepository.findDiscountByActiveAndEndDateIsAfter(true, LocalDateTime.now());
+
+        discountsToEnd.forEach(
+                discount -> {
+                    discountService.endDiscount(discount);
+                }
+        );
+    }
+
+
+
 
 
 }

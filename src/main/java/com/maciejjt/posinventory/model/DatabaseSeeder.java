@@ -266,6 +266,7 @@ public class DatabaseSeeder {
                             .storageId(storage4.getId())
                             .build());
 
+            /*
 
             WarehouseLocationRequest warehouseLocationRequest1 = WarehouseLocationRequest.builder()
                     .quantity(100)
@@ -396,7 +397,7 @@ public class DatabaseSeeder {
             inventoryService.addWarehouseLocation(5L,warehouseLocationRequest10);
             inventoryService.addWarehouseLocation(6L,warehouseLocationRequest11);
             inventoryService.addWarehouseLocation(6L,warehouseLocationRequest12);
-            inventoryService.addWarehouseLocation(7L,warehouseLocationRequest13);
+            inventoryService.addWarehouseLocation(7L,warehouseLocationRequest13);*/
 
 
 

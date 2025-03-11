@@ -6,8 +6,8 @@
 
     <changeSet id="add_cart_entity" author="admin">
         <createTable tableName="CART">
-            <column name="ID" type="BIGINT" autoIncrement="true" />
-            <column name="USER_ID" type="BIGINT"/>
+            <column name="ID" type="INTEGER" autoIncrement="true" />
+            <column name="USER_ID" type="INTEGER"/>
         </createTable>
 
         <addPrimaryKey columnNames="ID" tableName="CART" constraintName="PK_CART"/>
@@ -16,10 +16,10 @@
                                  referencedColumnNames="ID"/>
 
         <createTable tableName="CART_PRODUCT">
-            <column name="ID" type="BIGINT" autoIncrement="true"/>
-            <column name="PRODUCT_ID" type="BIGINT"/>
-            <column name="CART_ID" type="BIGINT"/>
-            <column name="QUANTITY" type="NUMERIC"/>
+            <column name="ID" type="INTEGER" autoIncrement="true"/>
+            <column name="PRODUCT_ID" type="INTEGER"/>
+            <column name="CART_ID" type="INTEGER"/>
+            <column name="QUANTITY" type="TINYINT"/>
         </createTable>
 
     </changeSet>

@@ -1,12 +1,15 @@
 package com.maciejjt.posinventory.service;
 
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
-import com.maciejjt.posinventory.exceptions.StorageNotEmptiedException;
+import com.maciejjt.posinventory.exceptions.DeletionException;
+import com.maciejjt.posinventory.exceptions.ShipmentAlreadyFinalizedException;
+import com.maciejjt.posinventory.exceptions.WarehouseConflictException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.dtos.*;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import com.maciejjt.posinventory.model.enums.StorageMovementStatus;
 import com.maciejjt.posinventory.model.requests.*;
+import com.maciejjt.posinventory.model.warehouse.*;
 import com.maciejjt.posinventory.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
@@ -14,10 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,10 +31,13 @@ public class InventoryService {
     private final ShipmentRepository shipmentRepository;
     private final SupplierShipmentItemRepository supplierShipmentItemRepository;
     private final DTOservice dtOservice;
-    private final WarehouseLocationRepository warehouseLocationRepository;
     private final StorageMovementRepository storageMovementRepository;
     private final StorageMovementItemRepository storageMovementItemRepository;
-
+    private final SectionRepository sectionRepository;
+    private final AisleRepository aisleRepository;
+    private final RackReposiotry rackReposiotry;
+    private final ShelfRepository shelfRepository;
+    private final PositionRepository positionRepository;
 
     @Transactional
     public void createInventoryForProduct(Long productId, InventoryRequest inventoryRequest) {
@@ -42,11 +45,10 @@ public class InventoryService {
         Storage storage = findStorageById(inventoryRequest.getStorageId());
         Set<Inventory> inventories = product.getInventories();
 
-        /* NAPRAW
         if (inventories.stream()
-                        .anyMatch(location -> location.getProduct().getId().equals(productId))) {
-            throw new RuntimeException("THERE IS ALREADY A INVENTORY FOR THIS PRODUCT IN THIS STORAGE");
-        }*/
+                        .anyMatch(inventory -> inventory.getProduct().getId().equals(productId))) {
+            throw new WarehouseConflictException("THERE IS ALREADY A INVENTORY FOR THIS PRODUCT IN THIS STORAGE");
+        }
 
         Inventory inventory = Inventory.builder()
                     .quantity(inventoryRequest.getQuantity())
@@ -59,6 +61,21 @@ public class InventoryService {
         inventories.add(inventory);
         product.setInventories(inventories);
 
+        productRepository.save(product);
+    }
+
+    @Transactional
+    public void createInventoryForProduct(Product product, Storage storage, Integer quantity) {
+        Inventory inventory = Inventory.builder()
+                .quantity(quantity)
+                .storage(storage)
+                .product(product)
+                .build();
+
+        inventoryRepository.save(inventory);
+
+        Set<Inventory> inventories = product.getInventories();
+        product.setInventories(inventories);
         productRepository.save(product);
     }
 
@@ -148,7 +165,7 @@ public class InventoryService {
     }
 
     @Transactional
-    public void finalizeShipment(Long id) {
+    public void finalizeShipment(Long id, Set<PositionRequest> positions) {
 
         SupplierShipment shipment = findSupplierShipmentById(id);
 
@@ -159,16 +176,24 @@ public class InventoryService {
 
             shipment.getSupplierShipmentItems().forEach(item -> {
                 Product product = item.getProduct();
-                product.getInventories().forEach(inventoryLocation -> {
-                    if (inventoryLocation.getStorage() == shipment.getStorage()){
-                        inventoryLocation.addQuantity(item.getQuantity());
-                        inventoryRepository.save(inventoryLocation);
+                product.getInventories().forEach(inventory -> {
+                    if (inventory.getStorage() == shipment.getStorage()){
+                        inventory.addQuantity(item.getQuantity());
+                        inventoryRepository.save(inventory);
+                    } else {
+                        createInventoryForProduct(product, shipment.getStorage() ,item.getQuantity());
                     }
                 });
             });
 
-            shipmentRepository.save(shipment);
+            positions.forEach(item -> {
+                Position position = positionRepository.findById(item.getPositionId()).orElseThrow(() -> new EntityNotFoundException("No position found with id " + item.getPositionId()));
+                position.addQuantity(item.getAmount());
+            });
 
+            shipmentRepository.save(shipment);
+        } else  {
+            throw new ShipmentAlreadyFinalizedException("Cannot finalize shipment marked as complete");
         }
     }
 
@@ -198,11 +223,13 @@ public class InventoryService {
 
         StorageMovement storageMovement = storageMovementRepository.save(
                 StorageMovement.builder()
-                .currentStorage(currentStorage)
-                .newStorage(newStorage)
-                .status(StorageMovementStatus.PLACED)
-                .shipmentStatus(ShipmentStatus.NOT_PLACED)
-                .build());
+                        .currentStorage(currentStorage)
+                        .newStorage(newStorage)
+                        .status(StorageMovementStatus.PLACED)
+                        .shipmentStatus(ShipmentStatus.NOT_PLACED)
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                            .build());
 
 
         Set<StorageMovementItem> storageMovementItems = new HashSet<>();
@@ -225,21 +252,6 @@ public class InventoryService {
 
         storageMovementRepository.save(storageMovement);
 
-        /*
-        Inventory inventoryLocation1 = inventoryLocationRepository.findById(storageMovementRequest.getCurrentStorageId()).orElseThrow();
-        Inventory inventoryLocation2 = inventoryLocationRepository.findById(storageMovementRequest.getNewStorageId()).orElseThrow();
-
-        if (inventoryLocation1.getQuantity() < storageMovementRequest.getQuantity()) {
-            throw new RuntimeException("Quantity inside the inital storage is smaller than requested to move");
-        } else {
-            inventoryLocation1.removeQuantity(storageMovementRequest.getQuantity());
-            inventoryLocation2.addQuantity(storageMovementRequest.getQuantity());
-        }
-
-        if (inventoryLocation1.getQuantity() == 0) {
-            inventoryLocationRepository.delete(inventoryLocation1);
-        }*/
-
         return dtOservice.buildStorageDto(currentStorage,false);
     }
 
@@ -247,7 +259,7 @@ public class InventoryService {
     public void deleteStorageById(Long storageId) {
         Storage storage = findStorageById(storageId);
         if (!storage.getInventories().isEmpty()) {
-            throw new StorageNotEmptiedException("CLEAR INVENTORY FIRST");
+            throw new DeletionException("CLEAR INVENTORY FIRST");
         } else {
             storageRepository.delete(storage);
         }
@@ -262,7 +274,6 @@ public class InventoryService {
 
     public SupplierDtoWithShipments findSupplierWithShipmentsById(Long supplierId) {
         Supplier supplier =  findSupplierById(supplierId);
-
         return dtOservice.buildSupplierDtoWithShipments(supplier);
     }
 
@@ -320,32 +331,7 @@ public class InventoryService {
     }
 
     @Transactional
-    public InventoryLocationDto addWarehouseLocation(Long inventoryId, WarehouseLocationRequest warehouseLocationRequest) {
-
-        Inventory inventory = findInventoryById(inventoryId);
-
-        WarehouseLocation warehouseLocation = warehouseLocationRepository.save(
-                WarehouseLocation.builder()
-                        .section(warehouseLocationRequest.getSection())
-                        .aisle(warehouseLocationRequest.getAisle())
-                        .rack(warehouseLocationRequest.getRack())
-                        .shelf(warehouseLocationRequest.getShelf())
-                        .position(warehouseLocationRequest.getPosition())
-                        .quantity(warehouseLocationRequest.getQuantity())
-                        .inventory(inventory)
-                        .build()
-        );
-
-        Set<WarehouseLocation> warehouseLocations = inventory.getWarehouseLocations();
-        warehouseLocations.add(warehouseLocation);
-
-        inventory.setWarehouseLocations(warehouseLocations);
-
-        return dtOservice.buildInventoryLocationDto(inventoryRepository.save(inventory));
-    }
-
-    @Transactional
-    public StorageDto finalizeMovement(Long movementId) {
+    public StorageDto finalizeMovement(Long movementId, Set<PositionRequest> positions) {
         StorageMovement storageMovement = findStorageMovementById(movementId);
         storageMovement.setStatus(StorageMovementStatus.FINALIZED);
 
@@ -362,6 +348,12 @@ public class InventoryService {
             inventoryRepository.save(inventory);
         });
 
+        positions.forEach(item -> {
+            Position position = positionRepository.findById(item.getPositionId()).orElseThrow(() -> new EntityNotFoundException("No position found with id " + item.getPositionId()));
+            position.addQuantity(item.getAmount());
+        });
+
+        storageMovement.setUpdatedAt(LocalDateTime.now());
         storageMovement.setStatus(StorageMovementStatus.FINALIZED);
         return null;
     }
@@ -372,13 +364,16 @@ public class InventoryService {
         storageMovement.setStatus(StorageMovementStatus.ACCEPTED);
 
         storageMovementRepository.save(storageMovement);
+        storageMovement.setUpdatedAt(LocalDateTime.now());
 
         return dtOservice.buildStorageDto(storageMovement.getCurrentStorage(), false);
     }
 
     @Transactional
-    public void sendMovement(Long movementId) {
+    public void sendMovement(Long movementId, Set<PositionRequest> positions) {
+
         StorageMovement storageMovement = findStorageMovementById(movementId);
+
         if (storageMovement.getStatus().equals(StorageMovementStatus.ACCEPTED)) {
 
             storageMovement.setStatus(StorageMovementStatus.SHIPPING);
@@ -396,6 +391,12 @@ public class InventoryService {
                 inventoryRepository.save(inventory);
             });
 
+            positions.forEach(item -> {
+                Position position = positionRepository.findById(item.getPositionId()).orElseThrow(() -> new EntityNotFoundException("No position found with id " + item.getPositionId()));
+                position.removeQuantity(item.getAmount());
+            });
+
+            storageMovement.setUpdatedAt(LocalDateTime.now());
             storageMovementRepository.save(storageMovement);
         } else {
             throw new RuntimeException("CANNOT SEND MOVEMENT BEFORE IT IS ACCEPTED BY THE RECEIVING STORAGE");
@@ -440,6 +441,7 @@ public class InventoryService {
                 storageMovement.setMovementItems(storageMovementItems);
             });
 
+            storageMovement.setUpdatedAt(LocalDateTime.now());
             storageMovementRepository.save(storageMovement);
         } else {
             throw new RuntimeException("CANNOT EDIT MOVEMENT IN SHIPMENT");
@@ -485,6 +487,7 @@ public class InventoryService {
         return storageMovementRepository.findStorageMovementsByCurrentStorage(storage)
                 .orElse(new ArrayList<>())
                     .stream()
+                    .sorted(Comparator.comparing(StorageMovement::getUpdatedAt))
                     .map(dtOservice::buildStorageMovementDto)
                     .collect(Collectors.toList());
     }
@@ -494,7 +497,53 @@ public class InventoryService {
         return storageMovementRepository.findStorageMovementsByNewStorage(storage)
                 .orElse(new ArrayList<>())
                 .stream()
+                .sorted(Comparator.comparing(StorageMovement::getUpdatedAt))
                 .map(dtOservice::buildStorageMovementDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void createWarehouseLayout(WarehouseLayoutRequest request) {
+        Storage storage = findStorageById(request.getStorageId());
+
+        request.getLayout().forEach((sectionNumber, aisles) -> {
+            Section section = sectionRepository.save(Section.builder()
+                    .number(sectionNumber)
+                    .warehouseLayout(storage.getWarehouseLayout())
+                    .build()
+            );
+
+            aisles.forEach(((aisleNumber, racks) -> {
+                Aisle aisle = aisleRepository.save(Aisle.builder()
+                        .section(section)
+                        .number(sectionNumber + "-" + aisleNumber)
+                        .build()
+                );
+
+                racks.forEach((rackNumber, shelves) -> {
+                    Rack rack = rackReposiotry.save(Rack.builder()
+                            .number(sectionNumber + "-" + aisleNumber + "_" + rackNumber)
+                            .aisle(aisle)
+                            .build()
+                    );
+
+                    shelves.forEach((shelfNumber) -> {
+                        Shelf shelf = shelfRepository.save(Shelf.builder()
+                                .rack(rack)
+                                .number(sectionNumber + "-" + aisleNumber + "_" + rackNumber + "-" + shelfNumber)
+                                .build()
+                        );
+                        for (int i = 0; i < 3 ; i++) {
+                            positionRepository.save(Position.builder()
+                                    .shelf(shelf)
+                                    .number(sectionNumber + "-" + aisleNumber + "_" + rackNumber + "-" + shelfNumber + "-" + i)
+                                    .build());
+                        }
+                    });
+
+                });
+            }));
+
+        });
     }
 }

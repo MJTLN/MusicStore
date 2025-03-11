@@ -1,5 +1,6 @@
 package com.maciejjt.posinventory.service;
 
+import com.maciejjt.posinventory.exceptions.DeletionException;
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.api.dtos.ApiProductDto;
@@ -9,10 +10,8 @@ import com.maciejjt.posinventory.model.requests.ProductRequest;
 import com.maciejjt.posinventory.model.requests.ProductSearchRequest;
 import com.maciejjt.posinventory.model.enums.ProductLabel;
 import com.maciejjt.posinventory.model.specifications.ProductSpecification;
-import com.maciejjt.posinventory.repository.CartProductRepository;
-import com.maciejjt.posinventory.repository.CartRepository;
-import com.maciejjt.posinventory.repository.ProductRepository;
-import com.maciejjt.posinventory.repository.StorageRepository;
+import com.maciejjt.posinventory.model.specifications.ShipmentSpecification;
+import com.maciejjt.posinventory.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +34,7 @@ public class ProductService {
     private final DTOservice dtOservice;
     private final CartProductRepository cartProductRepository;
     private final CartRepository cartRepository;
+    private final ShipmentRepository shipmentRepository;
 
     @Transactional
     public Product createProduct(ProductRequest productRequest) {
@@ -135,6 +135,11 @@ public class ProductService {
     }
 
     public void deleteProduct(Long productId) {
+        Specification<SupplierShipment> specification = ShipmentSpecification.findShipmentWithProduct(productId);
+        List<SupplierShipment> supplierShipments = shipmentRepository.findAll(specification);
+        if (!supplierShipments.isEmpty()) {
+            throw new DeletionException("There are still shipments for this product that are not marked as finished");
+        }
         productRepository.deleteById(productId);
     }
 

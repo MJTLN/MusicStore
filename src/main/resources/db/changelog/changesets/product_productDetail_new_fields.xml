@@ -9,11 +9,11 @@
             <addColumn tableName="PRODUCT">
                 <column name="LABEL" type="varchar(64)"/>
                 <column name="DESCRIPTION" type="varchar(1000)"/>
-                <column name="DESCRIPTION_SHORT" type="varchar(350)"/>
+                <column name="DESCRIPTION_SHORT" type="varchar(255)"/>
             </addColumn>
 
             <addColumn tableName="PRODUCT_DETAIL">
-                <column name="NAME" type="varchar(255)"/>
+                <column name="NAME" type="varchar(100)"/>
             </addColumn>
 
     </changeSet>

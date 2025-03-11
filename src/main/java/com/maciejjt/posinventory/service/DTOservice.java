@@ -6,6 +6,7 @@ import com.maciejjt.posinventory.model.api.dtos.CartDto;
 import com.maciejjt.posinventory.model.api.dtos.PurchaseDto;
 import com.maciejjt.posinventory.model.dtos.*;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
+import com.maciejjt.posinventory.model.warehouse.Position;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -114,7 +115,7 @@ public class DTOservice {
 
         Set<WarehouseLocationDto> warehouseLocationDtos = new HashSet<>();
 
-        inventory.getWarehouseLocations().forEach(warehouseLocation -> {
+        inventory.getPositions().forEach(warehouseLocation -> {
             warehouseLocationDtos.add(buildWarehouseLocationDto(warehouseLocation));
         });
 
@@ -129,15 +130,12 @@ public class DTOservice {
                 .build();
     }
 
-    private WarehouseLocationDto buildWarehouseLocationDto(WarehouseLocation warehouseLocation) {
+
+    private WarehouseLocationDto buildWarehouseLocationDto(Position position) {
         return WarehouseLocationDto.builder()
-                .id(warehouseLocation.getId())
-                .section(warehouseLocation.getSection())
-                .aisle(warehouseLocation.getAisle())
-                .rack(warehouseLocation.getRack())
-                .shelf(warehouseLocation.getShelf())
-                .position(warehouseLocation.getPosition())
-                .quantity(warehouseLocation.getQuantity())
+                .id(position.getId())
+                .number(position.getNumber())
+                .quantity(position.getQuantity())
                 .build();
     }
 
@@ -161,8 +159,6 @@ public class DTOservice {
                             .id(item.getProduct().getId())
                             .label(item.getProduct().getLabel())
                             .name(item.getProduct().getName())
-                            .discount(null) // Co to kurwa jest
-                            .productDetails(null)
                             .build(),
                     item.getQuantity()
             );

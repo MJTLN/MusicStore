@@ -40,8 +40,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiError);
     }
 
-    @ExceptionHandler(StorageNotEmptiedException.class)
-    public ResponseEntity<ApiError> handleStorageNotEmptiedException(StorageNotEmptiedException e) {
+    @ExceptionHandler(DeletionException.class)
+    public ResponseEntity<ApiError> handleStorageNotEmptiedException(DeletionException e) {
         ApiError apiError = ApiError.builder()
                 .message(e.getMessage())
                 .time(LocalDateTime.now())
@@ -50,4 +50,23 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
     }
 
+    @ExceptionHandler(WarehouseConflictException.class)
+    public ResponseEntity<ApiError> handleWarehouseConflictException(WarehouseConflictException e) {
+        ApiError apiError = ApiError.builder()
+                .message(e.getMessage())
+                .time(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
+    }
+
+    @ExceptionHandler(ShipmentAlreadyFinalizedException.class)
+    public ResponseEntity<ApiError> ShipmentAlreadyFinalizedException(ShipmentAlreadyFinalizedException e) {
+        ApiError apiError = ApiError.builder()
+                .message(e.getMessage())
+                .time(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
+    }
 }

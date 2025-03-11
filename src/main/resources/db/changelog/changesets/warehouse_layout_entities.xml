@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="warehouse_layout_entities" author="admin">
+        <createTable tableName="SECTION">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="WAREHOUSE_LAYOUT_ID" type="INTEGER"/>
+            <column name="NUMBER" type="VARCHAR(5)"/>
+        </createTable>
+
+        <createTable tableName="AISLE">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="SECTION_ID" type="INTEGER"/>
+            <column name="NUMBER" type="VARCHAR(5)"/>
+        </createTable>
+
+
+        <createTable tableName="RACK">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="AISLE_ID" type="INTEGER"/>
+            <column name="NUMBER" type="VARCHAR(5)"/>
+        </createTable>
+
+        <createTable tableName="SHELF">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="RACK_ID" type="INTEGER"/>
+            <column name="NUMBER" type="VARCHAR(5)"/>
+        </createTable>
+
+        <createTable tableName="POSITION">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="SHELF_ID" type="INTEGER"/>
+            <column name="INVENTORY_ID" type="INTEGER"/>
+            <column name="NUMBER" type="VARCHAR(5)"/>
+            <column name="QUANTITY" type="SMALLINT"/>
+        </createTable>
+
+        <createTable tableName="WAREHOUSE_LAYOUT">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="STORAGE_ID" type="INTEGER"/>
+        </createTable>
+
+        <addColumn tableName="STORAGE">
+            <column name="WAREHOUSE_LAYOUT_ID" type="INTEGER"/>
+        </addColumn>
+
+    </changeSet>
+</databaseChangeLog>

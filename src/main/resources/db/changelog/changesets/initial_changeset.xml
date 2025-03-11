@@ -6,48 +6,48 @@
 
     <changeSet id="1" author="maciej">
         <createTable tableName="ADDRESS">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="USER_ID" type="BIGINT"/>
-            <column name="COUNTRY" type="VARCHAR"/>
-            <column name="CITY" type="VARCHAR"/>
-            <column name="STREET" type="VARCHAR"/>
-            <column name="HOUSE" type="VARCHAR"/>
-            <column name="APARTMENT" type="VARCHAR"/>
-            <column name="PHONE" type="VARCHAR"/>
-            <column name="MAIL" type="VARCHAR"/>
+            <column name="USER_ID" type="INTEGER"/>
+            <column name="COUNTRY" type="VARCHAR(100)"/>
+            <column name="CITY" type="VARCHAR(100)"/>
+            <column name="STREET" type="VARCHAR(100)"/>
+            <column name="HOUSE" type="VARCHAR(10)"/>
+            <column name="APARTMENT" type="VARCHAR(10)"/>
+            <column name="PHONE" type="VARCHAR(20)"/>
+            <column name="MAIL" type="VARCHAR(320)"/>
         </createTable>
     </changeSet>
 
     <changeSet id="2" author="maciej">
         <createTable tableName="CATEGORY">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="NAME" type="VARCHAR"/>
-            <column name="PARENT_ID" type="BIGINT"/>
+            <column name="NAME" type="VARCHAR(100)"/>
+            <column name="PARENT_ID" type="INTEGER"/>
         </createTable>
     </changeSet>
 
     <changeSet id="3" author="maciej">
         <createTable tableName="DETAIL_FIELD">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="NAME" type="VARCHAR"/>
+            <column name="NAME" type="VARCHAR(100)"/>
         </createTable>
     </changeSet>
 
     <changeSet id="4" author="maciej">
         <createTable tableName="DISCOUNT">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="IS_FIXED_AMOUNT" type="BOOLEAN"/>
-            <column name="AMOUNT" type="BIGINT"/>
-            <column name="NAME" type="VARCHAR"/>
-            <column name="SALE_ID" type="BIGINT"/>
+            <column name="AMOUNT" type="NUMERIC"/>
+            <column name="NAME" type="VARCHAR(100)"/>
+            <column name="SALE_ID" type="INTEGER"/>
             <column name="START_DATE" type="TIMESTAMP"/>
             <column name="END_DATE" type="TIMESTAMP"/>
         </createTable>
@@ -64,23 +64,23 @@
     -->
     <changeSet id="6" author="maciej">
         <createTable tableName="INVENTORY">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="TYPE" type="VARCHAR"/>
             <column name="QUANTITY" type="INTEGER"/>
-            <column name="ADDRESS" type="VARCHAR"/>
-            <column name="PRODUCT_ID" type="BIGINT"/>
+            <column name="ADDRESS" type="VARCHAR(350)"/>
+            <column name="PRODUCT_ID" type="INTEGER"/>
         </createTable>
     </changeSet>
 
     <changeSet id="7" author="maciej">
         <createTable tableName="PAYMENT">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="PURCHASE_ID" type="BIGINT"/>
-            <column name="USER_ID" type="BIGINT"/>
+            <column name="PURCHASE_ID" type="INTEGER"/>
+            <column name="USER_ID" type="INTEGER"/>
             <column name="PAYMENT_STATUS" type="VARCHAR"/>
             <column name="CREATED_AT" type="TIMESTAMP"/>
             <column name="UPDATED_AT" type="TIMESTAMP"/>
@@ -89,13 +89,13 @@
 
     <changeSet id="8" author="maciej">
         <createTable tableName="PRODUCT">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="NAME" type="VARCHAR"/>
+            <column name="NAME" type="VARCHAR(255)"/>
             <column name="PRICE" type="NUMERIC"/>
-            <column name="UPC" type="BIGINT"/>
-            <column name="DISCOUNT_ID" type="BIGINT"/>
+            <column name="UPC" type="INTEGER"/>
+            <column name="DISCOUNT_ID" type="INTEGER"/>
             <column name="CREATED_AT" type="TIMESTAMP"/>
             <column name="UPDATED_AT" type="TIMESTAMP"/>
         </createTable>
@@ -103,33 +103,33 @@
 
     <changeSet id="9" author="maciej">
         <createTable tableName="PRODUCT_DETAIL">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="PRODUCT_ID" type="BIGINT"/>
-            <column name="FIELD_ID" type="BIGINT"/>
-            <column name="VALUE" type="VARCHAR"/>
+            <column name="PRODUCT_ID" type="INTEGER"/>
+            <column name="FIELD_ID" type="INTEGER"/>
+            <column name="VALUE" type="VARCHAR(100)"/>
         </createTable>
     </changeSet>
 
     <changeSet id="10" author="maciej">
         <createTable tableName="PURCHASE">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="USER_ID" type="BIGINT"/>
-            <column name="AMOUNT" type="DECIMAL"/>
-            <column name="PAYMENT_ID" type="BIGINT"/>
+            <column name="USER_ID" type="INTEGER"/>
+            <column name="AMOUNT" type="NUMERIC"/>
+            <column name="PAYMENT_ID" type="INTEGER"/>
             <column name="PURCHASE_STATUS" type="VARCHAR"/>
             <column name="SHIPMENT_STATUS" type="VARCHAR"/>
             <column name="SHIPPER" type="VARCHAR"/>
-            <column name="COUNTRY" type="VARCHAR"/>
-            <column name="CITY" type="VARCHAR"/>
-            <column name="STREET" type="VARCHAR"/>
-            <column name="HOUSE" type="VARCHAR"/>
-            <column name="APARTMENT" type="VARCHAR"/>
-            <column name="PHONE" type="VARCHAR"/>
-            <column name="MAIL" type="VARCHAR"/>
+            <column name="COUNTRY" type="VARCHAR(100)"/>
+            <column name="CITY" type="VARCHAR(100)"/>
+            <column name="STREET" type="VARCHAR(100)"/>
+            <column name="HOUSE" type="VARCHAR(10)"/>
+            <column name="APARTMENT" type="VARCHAR(10)"/>
+            <column name="PHONE" type="VARCHAR(20)"/>
+            <column name="MAIL" type="VARCHAR(320)"/>
             <column name="CREATED_AT" type="TIMESTAMP"/>
             <column name="UPDATED_AT" type="TIMESTAMP"/>
         </createTable>
@@ -137,57 +137,57 @@
 
     <changeSet id="11" author="maciej">
         <createTable tableName="SALE">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="NAME" type="VARCHAR(255)"/>
-            <column name="DESCRIPTION" type="VARCHAR"/>
+            <column name="DESCRIPTION" type="VARCHAR(320)"/>
         </createTable>
     </changeSet>
 
     <changeSet id="12" author="maciej">
         <createTable tableName="SUPPLIER">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="NAME" type="VARCHAR"/>
+            <column name="NAME" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
 
     <changeSet id="13" author="maciej">
         <createTable tableName="SUPPLIER_SHIPMENT">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="SUPPLIER_ID" type="BIGINT"/>
+            <column name="SUPPLIER_ID" type="INTEGER"/>
             <column name="CREATED_AT" type="TIMESTAMP"/>
             <column name="ARRIVAL_TIME" type="TIMESTAMP"/>
-            <column name="AMOUNT" type="DECIMAL"/>
+            <column name="AMOUNT" type="NUMERIC"/>
             <column name="STATUS" type="VARCHAR"/>
-            <column name="NOTE" type="VARCHAR"/>
+            <column name="NOTE" type="VARCHAR(320)"/>
         </createTable>
     </changeSet>
 
     <changeSet id="14" author="maciej">
         <createTable tableName="SUPPLIER_SHIPMENT_ITEM">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="PRODUCT_ID" type="BIGINT"/>
-            <column name="SHIPMENT_ID" type="BIGINT"/>
+            <column name="PRODUCT_ID" type="INTEGER"/>
+            <column name="SHIPMENT_ID" type="INTEGER"/>
             <column name="QUANTITY" type="INTEGER"/>
         </createTable>
     </changeSet>
 
     <changeSet id="15" author="maciej">
         <createTable tableName="APP_USER">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="USERNAME" type="VARCHAR"/>
-            <column name="PASSWORD" type="VARCHAR"/>
-            <column name="PHONE" type="VARCHAR"/>
-            <column name="EMAIL" type="VARCHAR"/>
+            <column name="USERNAME" type="VARCHAR(100)"/>
+            <column name="PASSWORD" type="VARCHAR(72)"/>
+            <column name="PHONE" type="VARCHAR(20)"/>
+            <column name="EMAIL" type="VARCHAR(320)"/>
             <column name="ROLE" type="VARCHAR"/>
         </createTable>
     </changeSet>
@@ -293,10 +293,10 @@
 
     <changeSet id="32" author="maciej">
         <createTable tableName="category_product">
-            <column name="category_id" type="BIGINT">
+            <column name="category_id" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
-            <column name="product_id" type="BIGINT">
+            <column name="product_id" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -312,8 +312,8 @@
                 constraintName="fk_category_product_product"/>
 
         <createTable tableName="PURCHASE_PRODUCTS">
-            <column name="PURCHASE_ID" type="BIGINT"/>
-            <column name="PRODUCT_ID" type="BIGINT"/>
+            <column name="PURCHASE_ID" type="INTEGER"/>
+            <column name="PRODUCT_ID" type="INTEGER"/>
         </createTable>
     </changeSet>
 

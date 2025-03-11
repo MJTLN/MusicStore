@@ -6,8 +6,8 @@
 
     <changeSet id="supplier_entity_changes" author="admin">
         <addColumn tableName="SUPPLIER">
-            <column name="OFFICIAL_ADDRESS" type="varchar"/>
-            <column name="CONTACT_INFO" type="varchar"/>
+            <column name="OFFICIAL_ADDRESS" type="varchar(350)"/>
+            <column name="CONTACT_INFO" type="varchar(1000)"/>
         </addColumn>
 
         <renameColumn tableName="SUPPLIER" oldColumnName="NAME" newColumnName="COMPANY_NAME"/>

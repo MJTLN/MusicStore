@@ -1,5 +1,6 @@
 package com.maciejjt.posinventory.model;
 
+import com.maciejjt.posinventory.model.warehouse.Position;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"storage","product"})
+@EqualsAndHashCode(exclude = {"storage","product","positions","supplierShipments"})
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class Inventory {
     )
     private Set<SupplierShipment> supplierShipments;
     @OneToMany(mappedBy = "inventory")
-    private Set<WarehouseLocation> warehouseLocations;
+    private Set<Position> positions;
     public void addQuantity(Integer amount) {
         this.quantity += amount;
     }

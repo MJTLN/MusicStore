@@ -6,14 +6,15 @@
 
     <changeSet id="sale_entity_new_fields" author="admin">
         <addColumn tableName="SALE">
-            <column name="STATUS" type="NUMERIC"/>
+            <column name="STATUS" type="VARCHAR"/>
             <column name="TYPE" type="BOOLEAN"/>
+            <column name="IS_AGGREGATING" type="BOOLEAN"/>
             <column name="START_DATE" type="TIMESTAMP"/>
             <column name="END_DATE" type="TIMESTAMP"/>
         </addColumn>
 
         <addColumn tableName="DISCOUNT">
-            <column name="IS_ACTIVE" type="BOOLEAN"/>
+            <column name="ACTIVE" type="BOOLEAN"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>
