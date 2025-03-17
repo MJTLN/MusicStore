@@ -7,8 +7,10 @@ import java.util.Set;
 
 @Data
 @Builder
-public class InventoryDto {
+public class InventoryDto implements IInventoryDto {
     private Long id;
+    private Long storageId;
     private Integer quantity;
-    private Set<InventoryLocationDto> inventoryLocations;
+    private SupplierShipmentLastNextDto lastShipment;
+    private SupplierShipmentLastNextDto nextShipment;
 }

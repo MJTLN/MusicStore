@@ -12,6 +12,8 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> superException(Exception e) {
+        e.printStackTrace();
+
         ApiError apiError = ApiError.builder()
                 .message(e.getMessage())
                 .time(LocalDateTime.now())
@@ -60,8 +62,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
     }
 
-    @ExceptionHandler(ShipmentAlreadyFinalizedException.class)
-    public ResponseEntity<ApiError> ShipmentAlreadyFinalizedException(ShipmentAlreadyFinalizedException e) {
+    @ExceptionHandler(BadStatusException.class)
+    public ResponseEntity<ApiError> ShipmentAlreadyFinalizedException(BadStatusException e) {
         ApiError apiError = ApiError.builder()
                 .message(e.getMessage())
                 .time(LocalDateTime.now())

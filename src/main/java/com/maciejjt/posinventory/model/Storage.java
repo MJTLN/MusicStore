@@ -13,7 +13,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"inventories"})
+@EqualsAndHashCode(exclude = {"inventories","warehouseLayout","supplierShipments","incomingMovements","outMovements"})
 public class Storage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

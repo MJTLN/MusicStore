@@ -66,11 +66,11 @@ public class DTOservice {
 
         Set<ProductDetailDto> productDetailDtos = buildProductDetailDtos(product.getProductDetails());
 
-        Set<InventoryLocationDto> inventoryLocationDtos = new HashSet<>();
+        Set<InventoryDto> inventoryDtos = new HashSet<>();
 
         product.getInventories().forEach(
                 inventoryLocation -> {
-                    inventoryLocationDtos.add(
+                    inventoryDtos.add(
                             buildInventoryLocationDto(inventoryLocation));
                 }
         );
@@ -94,7 +94,7 @@ public class DTOservice {
                 .label(product.getLabel())
                 .discount(discountDto)
                 .totalQuantity(totalQuantity)
-                .inventories(inventoryLocationDtos)
+                .inventories(inventoryDtos)
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .description(product.getDescription())
@@ -102,7 +102,7 @@ public class DTOservice {
                 .build();
     }
 
-    public InventoryLocationDto buildInventoryLocationDto(Inventory inventory) {
+    public InventoryDto buildInventoryLocationDto(Inventory inventory) {
         SupplierShipment lastShipment = inventory.getSupplierShipments().stream()
                 .filter(shipment -> shipment.getStatus() == ShipmentStatus.COMPLETED)
                 .max(Comparator.comparing(SupplierShipment::getArrivalTime))
@@ -113,29 +113,13 @@ public class DTOservice {
                 .min(Comparator.comparing(SupplierShipment::getArrivalTime))
                 .orElse(null);
 
-        Set<WarehouseLocationDto> warehouseLocationDtos = new HashSet<>();
-
-        inventory.getPositions().forEach(warehouseLocation -> {
-            warehouseLocationDtos.add(buildWarehouseLocationDto(warehouseLocation));
-        });
-
-        return InventoryLocationDto.builder()
+        return InventoryDto.builder()
                 .id(inventory.getId())
                 .quantity(inventory.getQuantity())
                 .storageId(inventory.getStorage().getId())
                 .storageId(inventory.getStorage().getId())
-                .warehouseLocationDtos(warehouseLocationDtos)
                 .lastShipment(lastShipment != null ? buildShipmentLastNextDto(lastShipment, inventory.getProduct().getId()) : null)
                 .nextShipment(nextShipment != null ? buildShipmentLastNextDto(nextShipment, inventory.getProduct().getId()) : null)
-                .build();
-    }
-
-
-    private WarehouseLocationDto buildWarehouseLocationDto(Position position) {
-        return WarehouseLocationDto.builder()
-                .id(position.getId())
-                .number(position.getNumber())
-                .quantity(position.getQuantity())
                 .build();
     }
 
@@ -196,7 +180,7 @@ public class DTOservice {
             });
         }
 
-        Set<IinventoryLocationDto> inventoryLocationDtos = new HashSet<>();
+        Set<IInventoryDto> inventoryLocationDtos = new HashSet<>();
 
         if (storage.getInventories() != null) {
             storage.getInventories().forEach(item -> {
@@ -218,7 +202,7 @@ public class DTOservice {
     }
 
 
-    private IinventoryLocationDto buildInventoryLocationDtoWithProduct(Inventory inventory) {
+    private IInventoryDto buildInventoryLocationDtoWithProduct(Inventory inventory) {
 
         /*
         SupplierShipment lastShipment = null;
@@ -251,7 +235,7 @@ public class DTOservice {
 
 
 
-        return InventoryLocationDtoWithProducts.builder()
+        return InventoryDtoWithProducts.builder()
                 .id(inventory.getId())
                 .quantity(inventory.getQuantity())
                 .productListingDto(buildProductListingDtoShort(inventory.getProduct()))
@@ -465,6 +449,88 @@ public class DTOservice {
         return CartDto.builder()
                 .id(cart.getId())
                 .products(products)
+                .build();
+    }
+
+    public DetailFieldDto buildDetailFieldDto(DetailField detailField) {
+        return DetailFieldDto.builder()
+                .id(detailField.getId())
+                .name(detailField.getName())
+                .values(detailField.getValues())
+                .build();
+    }
+
+    public PositionDto buildPositionDto(Position position) {
+        return PositionDto.builder()
+                .id(position.getId())
+                .shelfId(position.getShelf().getId())
+                .number(position.getNumber())
+                .quantity(position.getQuantity())
+                .build();
+    }
+
+    public WarehouseLayoutDto buildWarehouseLayoutDto(WarehouseLayout warehouseLayout) {
+        Map<String, Map<String, Map<String, Map<String, List<String>>>>> layout = new HashMap<>();
+
+        warehouseLayout.getSections().forEach(section -> {
+            Map<String, Map<String, Map<String, List<String>>>> aisles = new HashMap<>();
+
+            section.getAisles().forEach(aisle -> {
+                Map<String, Map<String, List<String>>> racks = new HashMap<>();
+
+                aisle.getRacks().forEach(rack -> {
+                    Map<String, List<String>> shelves = new HashMap<>();
+
+                    rack.getShelves().forEach(shelf -> {
+                        List<String> positionNumbers = shelf.getPositions().stream()
+                                                                .map(Position::getNumber)
+                                                                .toList();
+                        shelves.put(shelf.getNumber(), positionNumbers);
+                    });
+
+                    racks.put(rack.getId() + "," + rack.getNumber(), shelves);
+                });
+
+                aisles.put(aisle.getId() + "," + aisle.getNumber(), racks);
+            });
+            layout.put(section.getId() + "," + section.getNumber(), aisles);
+        } );
+
+        return  WarehouseLayoutDto.builder()
+                .layout(layout)
+                .build();
+    }
+
+
+    public WarehouseLayoutDtoDetailed buildWarehouseLayoutDetailedDto(WarehouseLayout warehouseLayout) {
+        Map<String, Map<String, Map<String, Map<String, List<PositionDto>>>>>layout = new HashMap<>();
+
+        warehouseLayout.getSections().forEach(section -> {
+            Map<String, Map<String, Map<String, List<PositionDto>>>> aisles = new HashMap<>();
+
+            section.getAisles().forEach(aisle -> {
+                Map<String, Map<String, List<PositionDto>>> racks = new HashMap<>();
+
+                aisle.getRacks().forEach(rack -> {
+                    Map<String, List<PositionDto>> shelves = new HashMap<>();
+
+                    rack.getShelves().forEach(shelf -> {
+                        List<PositionDto> positions = shelf.getPositions().stream()
+                                        .map(this::buildPositionDto)
+                                        .toList();
+                        shelves.put(shelf.getNumber(), positions);
+                    });
+
+                    racks.put(rack.getId() + "," + rack.getNumber(), shelves);
+                });
+
+                aisles.put(aisle.getId() + "," + aisle.getNumber(), racks);
+            });
+            layout.put(section.getId() + "," + section.getNumber(), aisles);
+        } );
+
+        return WarehouseLayoutDtoDetailed.builder()
+                .layout(layout)
                 .build();
     }
 }

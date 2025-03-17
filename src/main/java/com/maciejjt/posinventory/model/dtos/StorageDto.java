@@ -12,6 +12,6 @@ public class StorageDto {
     private Long id;
     private InventoryLocationType type;
     private String address;
-    Set<IinventoryLocationDto> inventoryLocations;
-    Set<SupplierShipmentDto> supplierShipments; //usunac? możę oddzielny request na to tak samo na movements?
+    Set<IInventoryDto> inventoryLocations;
+    Set<SupplierShipmentDto> supplierShipments;
 }

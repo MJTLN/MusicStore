@@ -16,6 +16,7 @@
     <include file="db/changelog/changesets/add_cart_entity.xml"/>
     <include file="db/changelog/changesets/sale_entity_new_fields.xml"/>
     <include file="db/changelog/changesets/warehouse_layout_entities.xml"/>
+    <include file="db/changelog/changesets/detail_field_values_jsonb.xml"/>
 
 </databaseChangeLog>
 

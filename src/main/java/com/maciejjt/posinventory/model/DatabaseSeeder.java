@@ -16,9 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -266,140 +264,121 @@ public class DatabaseSeeder {
                             .storageId(storage4.getId())
                             .build());
 
+
+            WarehouseLayoutRequest storage1Request = WarehouseLayoutRequest.builder()
+                    .storageId(1L)
+                    .layout(Map.of(
+                            "S1", Map.of(
+                                    "A1", Map.of(
+                                            "R1", List.of("S1", "S2", "S3", "S4"),
+                                            "R2", List.of("S5", "S6", "S7")
+                                    ),
+                                    "A2", Map.of(
+                                            "R3", List.of("S8", "S9", "S10", "S11"),
+                                            "R4", List.of("S12", "S13", "S14")
+                                    )
+                            ),
+                            "S2", Map.of(
+                                    "A3", Map.of(
+                                            "R5", List.of("S15", "S16", "S17"),
+                                            "R6", List.of("S18", "S19")
+                                    ),
+                                    "A4", Map.of(
+                                            "R7", List.of("S20", "S21", "S22"),
+                                            "R8", List.of("S23", "S24")
+                                    )
+                            )
+                    ))
+                    .build();
+
+            WarehouseLayoutRequest storage2Request = WarehouseLayoutRequest.builder()
+                    .storageId(2L)
+                    .layout(Map.of(
+                            "S1", Map.of(
+                                    "A1", Map.of(
+                                            "R1", List.of("S1", "S2", "S3", "S4"),
+                                            "R2", List.of("S5", "S6", "S7")
+                                    ),
+                                    "A2", Map.of(
+                                            "R3", List.of("S8", "S9", "S10"),
+                                            "R4", List.of("S11", "S12")
+                                    )
+                            ),
+                            "S2", Map.of(
+                                    "A3", Map.of(
+                                            "R5", List.of("S13", "S14", "S15"),
+                                            "R6", List.of("S16", "S17", "S18")
+                                    ),
+                                    "A4", Map.of(
+                                            "R7", List.of("S19", "S20", "S21"),
+                                            "R8", List.of("S22", "S23", "S24", "S25")
+                                    )
+                            )
+                    ))
+                    .build();
+
+            WarehouseLayoutRequest storage3Request = WarehouseLayoutRequest.builder()
+                    .storageId(3L)
+                    .layout(Map.of(
+                            "S1", Map.of(
+                                    "A1", Map.of(
+                                            "R1", List.of("S1", "S2", "S3"),
+                                            "R2", List.of("S4", "S5")
+                                    )
+                            ),
+                            "S2", Map.of(
+                                    "A2", Map.of(
+                                            "R3", List.of("S6", "S7"),
+                                            "R4", List.of("S8", "S9")
+                                    )
+                            )
+                    ))
+                    .build();
+
+            WarehouseLayoutRequest storage4Request = WarehouseLayoutRequest.builder()
+                    .storageId(4L)
+                    .layout(Map.of(
+                            "S1", Map.of(
+                                    "A1", Map.of(
+                                            "R1", List.of("S1", "S2"),
+                                            "R2", List.of("S3")
+                                    )
+                            ),
+                            "S2", Map.of(
+                                    "A2", Map.of(
+                                            "R3", List.of("S4", "S5", "S6")
+                                    )
+                            )
+                    ))
+                    .build();
+
+            inventoryService.createWarehouseLayout(storage1Request);
+            inventoryService.createWarehouseLayout(storage2Request);
+            inventoryService.createWarehouseLayout(storage3Request);
+            inventoryService.createWarehouseLayout(storage4Request);
+
+            inventoryService.createWarehouseLayout(storage1Request);
+            inventoryService.createWarehouseLayout(storage2Request);
+            inventoryService.createWarehouseLayout(storage3Request);
+            inventoryService.createWarehouseLayout(storage4Request);
+
             /*
+            inventoryService.putProductsOnRack(product1,);
+            inventoryService.putProductsOnRack();
+            inventoryService.putProductsOnRack();
+            inventoryService.putProductsOnRack();
 
-            WarehouseLocationRequest warehouseLocationRequest1 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(2)
-                    .shelf(1)
-                    .position(0)
-                    .build();
+            inventoryService.putProductsOnRack();
+            inventoryService.putProductsOnRack();
+            inventoryService.putProductsOnRack();
+            inventoryService.putProductsOnRack();
 
-            WarehouseLocationRequest warehouseLocationRequest2 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(5)
-                    .shelf(2)
-                    .position(0)
-                    .build();
+            inventoryService.putProductsOnRack();
+            inventoryService.putProductsOnRack();
 
-            WarehouseLocationRequest warehouseLocationRequest3 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(2)
-                    .shelf(2)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest4 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(2)
-                    .shelf(3)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest5 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(3)
-                    .shelf(1)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest6 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(3)
-                    .shelf(2)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest7 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(4)
-                    .shelf(1)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest8 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(1)
-                    .shelf(1)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest9 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(1)
-                    .shelf(2)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest10 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(1)
-                    .shelf(3)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest11 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(2)
-                    .shelf(1)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest12 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(2)
-                    .shelf(2)
-                    .position(0)
-                    .build();
-
-            WarehouseLocationRequest warehouseLocationRequest13 = WarehouseLocationRequest.builder()
-                    .quantity(100)
-                    .section(1)
-                    .aisle(1)
-                    .rack(2)
-                    .shelf(3)
-                    .position(0)
-                    .build();
-
-            inventoryService.addWarehouseLocation(1L,warehouseLocationRequest1);
-            inventoryService.addWarehouseLocation(1L,warehouseLocationRequest2);
-            inventoryService.addWarehouseLocation(2L,warehouseLocationRequest3);
-            inventoryService.addWarehouseLocation(2L,warehouseLocationRequest4);
-            inventoryService.addWarehouseLocation(3L,warehouseLocationRequest5);
-            inventoryService.addWarehouseLocation(3L,warehouseLocationRequest6);
-            inventoryService.addWarehouseLocation(4L,warehouseLocationRequest7);
-            inventoryService.addWarehouseLocation(4L,warehouseLocationRequest8);
-            inventoryService.addWarehouseLocation(5L,warehouseLocationRequest9);
-            inventoryService.addWarehouseLocation(5L,warehouseLocationRequest10);
-            inventoryService.addWarehouseLocation(6L,warehouseLocationRequest11);
-            inventoryService.addWarehouseLocation(6L,warehouseLocationRequest12);
-            inventoryService.addWarehouseLocation(7L,warehouseLocationRequest13);*/
-
-
+            inventoryService.putProductsOnRack();
+            inventoryService.putProductsOnRack();
+*/
 
 
             Supplier supplier = Supplier.builder()

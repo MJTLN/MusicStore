@@ -18,7 +18,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="SECTION_ID" type="INTEGER"/>
-            <column name="NUMBER" type="VARCHAR(5)"/>
+            <column name="NUMBER" type="VARCHAR(10)"/>
         </createTable>
 
 
@@ -27,7 +27,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="AISLE_ID" type="INTEGER"/>
-            <column name="NUMBER" type="VARCHAR(5)"/>
+            <column name="NUMBER" type="VARCHAR(15)"/>
         </createTable>
 
         <createTable tableName="SHELF">
@@ -35,7 +35,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="RACK_ID" type="INTEGER"/>
-            <column name="NUMBER" type="VARCHAR(5)"/>
+            <column name="NUMBER" type="VARCHAR(20)"/>
         </createTable>
 
         <createTable tableName="POSITION">
@@ -44,7 +44,7 @@
             </column>
             <column name="SHELF_ID" type="INTEGER"/>
             <column name="INVENTORY_ID" type="INTEGER"/>
-            <column name="NUMBER" type="VARCHAR(5)"/>
+            <column name="NUMBER" type="VARCHAR(25)"/>
             <column name="QUANTITY" type="SMALLINT"/>
         </createTable>
 
@@ -52,7 +52,6 @@
             <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="STORAGE_ID" type="INTEGER"/>
         </createTable>
 
         <addColumn tableName="STORAGE">

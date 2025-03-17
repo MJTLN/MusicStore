@@ -1,14 +1,17 @@
 package com.maciejjt.posinventory.api;
 
 import com.maciejjt.posinventory.exceptions.AuthenticationException;
+import com.maciejjt.posinventory.model.DetailField;
 import com.maciejjt.posinventory.model.User;
 import com.maciejjt.posinventory.model.api.dtos.ApiProductDto;
 import com.maciejjt.posinventory.model.api.dtos.CartDto;
+import com.maciejjt.posinventory.model.dtos.DetailFieldDto;
 import com.maciejjt.posinventory.model.dtos.ProductListingDto;
 import com.maciejjt.posinventory.model.dtos.SaleDtoWithProducts;
 import com.maciejjt.posinventory.model.requests.ProductSearchRequest;
 import com.maciejjt.posinventory.repository.UserRepository;
 import com.maciejjt.posinventory.service.CustomUserDetails;
+import com.maciejjt.posinventory.service.DetailFieldService;
 import com.maciejjt.posinventory.service.DiscountService;
 import com.maciejjt.posinventory.service.ProductService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -28,6 +31,7 @@ public class ApiProductController {
     private final ProductService productService;
     private final UserRepository userRepository;
     private final DiscountService discountService;
+    private final DetailFieldService detailFieldService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiProductDto> getProductById(@PathVariable Long id) {
@@ -38,6 +42,11 @@ public class ApiProductController {
     @PostMapping("/search")
     public ResponseEntity<List<ProductListingDto>> searchProducts(@RequestBody ProductSearchRequest productSearchRequest) {
         return ResponseEntity.ok(productService.findProductListingsByDetails(productSearchRequest));
+    }
+
+    @GetMapping("/{categoryId}")
+    private ResponseEntity<List<DetailFieldDto>> getDetailsByCategory(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(detailFieldService.findDetailFieldByCategory(categoryId));
     }
 
     @PostMapping("{productId}/cart")

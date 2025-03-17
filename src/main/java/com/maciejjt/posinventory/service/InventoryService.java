@@ -2,7 +2,7 @@ package com.maciejjt.posinventory.service;
 
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
 import com.maciejjt.posinventory.exceptions.DeletionException;
-import com.maciejjt.posinventory.exceptions.ShipmentAlreadyFinalizedException;
+import com.maciejjt.posinventory.exceptions.BadStatusException;
 import com.maciejjt.posinventory.exceptions.WarehouseConflictException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.dtos.*;
@@ -38,6 +38,7 @@ public class InventoryService {
     private final RackReposiotry rackReposiotry;
     private final ShelfRepository shelfRepository;
     private final PositionRepository positionRepository;
+    private final WarehouseLayoutRepository warehouseLayoutRepository;
 
     @Transactional
     public void createInventoryForProduct(Long productId, InventoryRequest inventoryRequest) {
@@ -45,8 +46,9 @@ public class InventoryService {
         Storage storage = findStorageById(inventoryRequest.getStorageId());
         Set<Inventory> inventories = product.getInventories();
 
-        if (inventories.stream()
-                        .anyMatch(inventory -> inventory.getProduct().getId().equals(productId))) {
+        if (storage.getInventories().stream()
+                .anyMatch(inventory -> inventory.getProduct().getId().equals(productId))
+        ) {
             throw new WarehouseConflictException("THERE IS ALREADY A INVENTORY FOR THIS PRODUCT IN THIS STORAGE");
         }
 
@@ -79,13 +81,13 @@ public class InventoryService {
         productRepository.save(product);
     }
 
-    public InventoryLocationDto getInventoryById(Long inventoryId) {
+    public InventoryDto getInventoryById(Long inventoryId) {
             return dtOservice.buildInventoryLocationDto(findInventoryById(inventoryId));
     }
 
 
     @Transactional
-    public InventoryLocationDto updateInventoryLocation(Long inventoryId, InventoryRequest inventoryRequest) {
+    public InventoryDto updateInventoryLocation(Long inventoryId, InventoryRequest inventoryRequest) {
                 Inventory inventory =  findInventoryById(inventoryId);
                 //! CZY TO OPYMALNE ? MOZE DWIE ODDZIELNE METODY DO EDYYCJI TEGO I TEGO?
                 if(!inventory.getStorage().getId().equals(inventoryRequest.getStorageId())) {
@@ -165,7 +167,7 @@ public class InventoryService {
     }
 
     @Transactional
-    public void finalizeShipment(Long id, Set<PositionRequest> positions) {
+    public void finalizeShipment(Long id) {
 
         SupplierShipment shipment = findSupplierShipmentById(id);
 
@@ -176,24 +178,23 @@ public class InventoryService {
 
             shipment.getSupplierShipmentItems().forEach(item -> {
                 Product product = item.getProduct();
-                product.getInventories().forEach(inventory -> {
-                    if (inventory.getStorage() == shipment.getStorage()){
-                        inventory.addQuantity(item.getQuantity());
-                        inventoryRepository.save(inventory);
-                    } else {
-                        createInventoryForProduct(product, shipment.getStorage() ,item.getQuantity());
-                    }
-                });
-            });
 
-            positions.forEach(item -> {
-                Position position = positionRepository.findById(item.getPositionId()).orElseThrow(() -> new EntityNotFoundException("No position found with id " + item.getPositionId()));
-                position.addQuantity(item.getAmount());
+                Inventory inventory = product.getInventories().stream()
+                        .filter(inv -> inv.getStorage().equals(shipment.getStorage()))
+                        .findFirst()
+                        .orElse(Inventory.builder()
+                                .storage(shipment.getStorage())
+                                .product(product)
+                                .quantity(0)
+                                .build());
+
+                inventory.addQuantity(item.getQuantity());
+                inventoryRepository.save(inventory);
             });
 
             shipmentRepository.save(shipment);
         } else  {
-            throw new ShipmentAlreadyFinalizedException("Cannot finalize shipment marked as complete");
+            throw new BadStatusException("Cannot finalize shipment marked as complete");
         }
     }
 
@@ -259,7 +260,7 @@ public class InventoryService {
     public void deleteStorageById(Long storageId) {
         Storage storage = findStorageById(storageId);
         if (!storage.getInventories().isEmpty()) {
-            throw new DeletionException("CLEAR INVENTORY FIRST");
+            throw new DeletionException("Inventories must be cleared before deleting storage");
         } else {
             storageRepository.delete(storage);
         }
@@ -281,7 +282,7 @@ public class InventoryService {
     public void deleteSupplierById(Long supplierId) {
         Supplier supplier = findSupplierById(supplierId);
         if (!supplier.getShipments().isEmpty()) {
-            throw new RuntimeException("CLEAR SUPPLIER SHIPMENTS FIRST");
+            throw new RuntimeException("Supplier's shipments need to be deleted before deleting supplier");
         } else {
             supplierRepository.delete(supplier);
         }
@@ -392,8 +393,9 @@ public class InventoryService {
             });
 
             positions.forEach(item -> {
-                Position position = positionRepository.findById(item.getPositionId()).orElseThrow(() -> new EntityNotFoundException("No position found with id " + item.getPositionId()));
+                Position position = findPositionById(item.getPositionId());
                 position.removeQuantity(item.getAmount());
+                positionRepository.save(position);
             });
 
             storageMovement.setUpdatedAt(LocalDateTime.now());
@@ -505,6 +507,14 @@ public class InventoryService {
     @Transactional
     public void createWarehouseLayout(WarehouseLayoutRequest request) {
         Storage storage = findStorageById(request.getStorageId());
+        WarehouseLayout warehouseLayout =  warehouseLayoutRepository.save(WarehouseLayout.builder()
+                .storage(storage)
+                .build()
+        );
+        storage.setWarehouseLayout(warehouseLayout);
+        storageRepository.save(storage);
+
+        Set<Section> sections = new HashSet<>();
 
         request.getLayout().forEach((sectionNumber, aisles) -> {
             Section section = sectionRepository.save(Section.builder()
@@ -512,6 +522,8 @@ public class InventoryService {
                     .warehouseLayout(storage.getWarehouseLayout())
                     .build()
             );
+
+            sections.add(section);
 
             aisles.forEach(((aisleNumber, racks) -> {
                 Aisle aisle = aisleRepository.save(Aisle.builder()
@@ -533,7 +545,7 @@ public class InventoryService {
                                 .number(sectionNumber + "-" + aisleNumber + "_" + rackNumber + "-" + shelfNumber)
                                 .build()
                         );
-                        for (int i = 0; i < 3 ; i++) {
+                        for (int i = 1; i < 4 ; i++) {
                             positionRepository.save(Position.builder()
                                     .shelf(shelf)
                                     .number(sectionNumber + "-" + aisleNumber + "_" + rackNumber + "-" + shelfNumber + "-" + i)
@@ -543,7 +555,126 @@ public class InventoryService {
 
                 });
             }));
-
         });
+        warehouseLayout.setSections(sections);
+        warehouseLayoutRepository.save(warehouseLayout);
+    }
+
+    @Transactional
+    public void putProductOnPosition(Long positionId, Long inventoryId, Integer quantity) {
+        Position position = positionRepository.findById(positionId).orElseThrow(() -> new EntityNotFoundException("Position not found with id " + positionId));
+        Inventory inventory = findInventoryById(inventoryId);
+        position.setInventory(inventory);
+        position.setQuantity(quantity);
+        positionRepository.save(position);
+    }
+
+    @Transactional
+    public void putProductOnPosition(Position position, Long inventoryId, Integer quantity) {
+        Inventory inventory = findInventoryById(inventoryId);
+        position.setInventory(inventory);
+        position.setQuantity(quantity);
+        positionRepository.save(position);
+    }
+
+    @Transactional
+    public void putProductsOnShelf(Long shelfId, Long inventoryId, Integer quantity) {
+        Shelf shelf = findShelfById(shelfId);
+        Integer dividedQuantity = quantity/shelf.getPositions().size();
+        shelf.getPositions().forEach( position -> {
+            putProductOnPosition(position, inventoryId, dividedQuantity);
+        });
+    }
+
+    @Transactional
+    public void putProductOnShelf(Shelf shelf, Long inventoryId, Integer quantity) {
+        Integer dividedQuantity = quantity/shelf.getPositions().size();
+        shelf.getPositions().forEach( position -> {
+            putProductOnPosition(position, inventoryId, dividedQuantity);
+        });
+    }
+
+    @Transactional
+    public void putProductsOnRack(Long rackId, Long inventoryId, Integer quantity) {
+        Rack rack = findRackById(rackId);
+        Integer dividedQuantity = quantity/rack.getShelves().size();
+        rack.getShelves().forEach( shelf -> {
+            putProductOnShelf(shelf, inventoryId, dividedQuantity);
+        });
+    }
+
+    public Rack findRackById(Long id) {
+        return rackReposiotry.findById(id).orElseThrow(() -> new EntityNotFoundException("Rack not found with id " + id));
+    }
+
+    public Shelf findShelfById(Long id) {
+        return shelfRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Shelf not found with id " + id));
+    }
+
+    public Position findPositionById(Long positionId) {
+        return positionRepository.findById(positionId).orElseThrow(() -> new EntityNotFoundException("position not found with id " + positionId));
+    }
+
+    @Transactional
+    public void updatePositionProductQuantity(Long positionId, Integer quantity, boolean add) {
+        Position position = findPositionById(positionId);
+        if (add) {
+            position.addQuantity(quantity);
+        } else {
+            if (quantity > position.getQuantity()) {
+                throw new WarehouseConflictException("The specified quantity is larger than current quantity at this position - " + position.getQuantity());
+            }
+            position.removeQuantity(quantity);
+            if (position.getQuantity() == 0) {
+                position.setQuantity(null);
+                position.setInventory(null);
+            }
+        }
+        positionRepository.save(position);
+    }
+
+    @Transactional
+    public void movePosition(Long currentPositionId, Long newPositionId) {
+        Position currentPosition = findPositionById(currentPositionId);
+        Position newPosition = findPositionById(newPositionId);
+        if (!currentPosition.getInventory().equals(newPosition.getInventory())) {
+            throw new WarehouseConflictException("Supplied positions with ids: " + currentPosition + ", " + newPosition + " are in different storages");
+        }
+        if (newPosition.getInventory() != null || newPosition.getQuantity() == null) {
+            throw new WarehouseConflictException("Cannot move stock to a position that's not emptied");
+        }
+        if (currentPosition.getInventory() != null || currentPosition.getQuantity() == 0) {
+            throw new WarehouseConflictException("Cannot move stock from a empty position");
+        }
+        newPosition.setInventory(currentPosition.getInventory());
+        newPosition.setQuantity(currentPosition.getQuantity());
+        currentPosition.setQuantity(null);
+        currentPosition.setInventory(null);
+
+        positionRepository.save(currentPosition);
+        positionRepository.save(newPosition);
+    }
+
+    public Set<PositionDto> getPositionsForInventory(Long inventoryId) {
+        Inventory inventory = findInventoryById(inventoryId);
+        return inventory.getPositions().stream()
+                .map(dtOservice::buildPositionDto)
+                .collect(Collectors.toSet());
+    }
+
+    public WarehouseLayoutDto getWarehouseLayoutForStorage(Long storageId) {
+        Storage storage = findStorageById(storageId);
+        return dtOservice.buildWarehouseLayoutDto(storage.getWarehouseLayout());
+    }
+
+    public WarehouseLayoutDtoDetailed getWarehouseLayoutDetailedForStorage(Long storageId) {
+        Storage storage = findStorageById(storageId);
+        return dtOservice.buildWarehouseLayoutDetailedDto(storage.getWarehouseLayout());
+    }
+
+    public SupplierShipmentDto updateShipmentStatus(Long id, ShipmentStatus shipmentStatus) {
+        SupplierShipment supplierShipment = findSupplierShipmentById(id);
+        supplierShipment.setStatus(shipmentStatus);
+        return dtOservice.buildShipmentWithListingsDto(shipmentRepository.save(supplierShipment));
     }
 }
