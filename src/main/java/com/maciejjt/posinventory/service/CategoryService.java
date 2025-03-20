@@ -52,10 +52,12 @@ public class CategoryService {
 
         Category savedCategory = categoryRepository.save(category);
 
-        savedCategory.getChildCategories().forEach(item ->{
-            item.setParentCategory(savedCategory);
-            categoryRepository.save(item);
-        });
+        if (savedCategory.getChildCategories() != null) {
+            savedCategory.getChildCategories().forEach(item ->{
+                item.setParentCategory(savedCategory);
+                categoryRepository.save(item);
+            });
+        }
      }
 
 
@@ -78,5 +80,19 @@ public class CategoryService {
 
     private Category findCategoryById(Long id) {
         return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Category not found with id " + id));
+    }
+
+    public List<CategoryDto> getPrimaryCategories() {
+       List<Category> categories = categoryRepository.getCategoriesByParentCategoryIsNull();
+       return categories.stream()
+               .map(dtOservice::buildCategoryDto)
+               .toList();
+    }
+
+    public List<CategoryDto> getChildCategoriesById(Long categoryId) {
+        Category category = findCategoryById(categoryId);
+        return category.getChildCategories().stream()
+                .map(dtOservice::buildCategoryDto)
+                .toList();
     }
 }

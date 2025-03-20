@@ -47,7 +47,6 @@ public class PurchaseController {
         return ResponseEntity.ok(purchaseService.getUserPurchases(user));
     }
 
-    @GetMapping
     private User findUser(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return userRepository.findUserByEmail(userDetails.getUsername())

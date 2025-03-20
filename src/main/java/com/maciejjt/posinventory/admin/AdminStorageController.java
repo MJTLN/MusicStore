@@ -2,8 +2,6 @@ package com.maciejjt.posinventory.admin;
 
 import com.maciejjt.posinventory.model.dtos.StorageBriefDto;
 import com.maciejjt.posinventory.model.dtos.StorageDto;
-import com.maciejjt.posinventory.model.dtos.WarehouseLayoutDto;
-import com.maciejjt.posinventory.model.dtos.WarehouseLayoutDtoDetailed;
 import com.maciejjt.posinventory.model.requests.StorageRequest;
 import com.maciejjt.posinventory.service.InventoryService;
 import lombok.Data;

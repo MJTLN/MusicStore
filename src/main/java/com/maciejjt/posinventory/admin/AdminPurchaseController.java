@@ -23,22 +23,22 @@ public class AdminPurchaseController {
     }
 
     @PatchMapping("/{purchaseId}/payment")
-    public ResponseEntity<PurchaseDto> updatePaymentStatus(@PathVariable Long purchaseId, @RequestBody PaymentStatus paymentStatus) {
+    public ResponseEntity<PurchaseDto> updatePaymentStatus(@PathVariable Long purchaseId, @RequestParam PaymentStatus paymentStatus) {
         return ResponseEntity.ok(purchaseService.updatePaymentStatus(purchaseId, paymentStatus));
     }
 
     @PatchMapping("/{purchaseId}/shipping")
-    public ResponseEntity<PurchaseDto> updateShippingStatus(@PathVariable Long purchaseId, @RequestBody ShipmentStatus shipmentStatus) {
+    public ResponseEntity<PurchaseDto> updateShippingStatus(@PathVariable Long purchaseId, @RequestParam ShipmentStatus shipmentStatus) {
         return ResponseEntity.ok(purchaseService.updateShippingStatus(purchaseId, shipmentStatus));
     }
 
     @PatchMapping("/{purchaseId}/status")
-    public ResponseEntity<PurchaseDto> updatePurchaseStatus(@PathVariable Long purchaseId, @RequestBody PurchaseStatus purchaseStatus) {
+    public ResponseEntity<PurchaseDto> updatePurchaseStatus(@PathVariable Long purchaseId, @RequestParam PurchaseStatus purchaseStatus) {
         return ResponseEntity.ok(purchaseService.updatePurchaseStatus(purchaseId, purchaseStatus));
     }
 
     @PatchMapping("/issue/{issueId}")
-    public ResponseEntity<Void> updateIssueStatus(@PathVariable Long issueId, @RequestBody PurchaseIssueStatus purchaseIssueStatus) {
+    public ResponseEntity<Void> updateIssueStatus(@PathVariable Long issueId, @RequestParam PurchaseIssueStatus purchaseIssueStatus) {
         purchaseService.updateIssueStatus(issueId, purchaseIssueStatus);
         return ResponseEntity.ok().build();
     }

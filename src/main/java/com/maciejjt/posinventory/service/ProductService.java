@@ -106,8 +106,7 @@ public class ProductService {
             return dtOservice.buildProductDto(productRepository.save(product));
         }
 
-        //ROZBUDOWAC
-       throw new RuntimeException("Selected product has no label like this");
+       throw new DeletionException("The specified product does not have such label at the moment");
     }
 
     @Transactional

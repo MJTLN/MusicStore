@@ -4,8 +4,6 @@ import com.maciejjt.posinventory.model.enums.InventoryLocationType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -32,11 +30,4 @@ public class Storage {
     @OneToMany(mappedBy = "currentStorage")
     Set<StorageMovement> outMovements;
 
-    public void addIncomingMovement(StorageMovement storageMovement) {
-        this.incomingMovements.add(storageMovement);
-    }
-
-    public void addOutMovement(StorageMovement storageMovement) {
-        this.outMovements.add(storageMovement);
-    }
 }

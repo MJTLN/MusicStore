@@ -16,21 +16,6 @@ import java.util.stream.Collectors;
 @Service
 @Data
 public class DTOservice {
- /*   public DiscountDto buildDiscountDto(Product product) {
-
-        Sale sale = product.getDiscount().getSale();
-        Long saleId = (sale != null) ? sale.getId() : null;
-
-        return  DiscountDto.builder()
-                .id(product.getDiscount().getId())
-                .isFixedAmount(product.getDiscount().isFixedAmount())
-                .saleId(saleId)
-                .amount(product.getDiscount().getAmount())
-                .name(product.getDiscount().getName())
-                .startDate(product.getDiscount().getStartDate())
-                .endDate(product.getDiscount().getEndDate())
-                .build();
-    }*/
 
     public Set<ProductDetailDto> buildProductDetailDtos(Set<ProductDetail> productDetails) {
         return productDetails.stream()
@@ -203,25 +188,6 @@ public class DTOservice {
 
 
     private IInventoryDto buildInventoryLocationDtoWithProduct(Inventory inventory) {
-
-        /*
-        SupplierShipment lastShipment = null;
-        SupplierShipment nextShipment = null;
-
-
-        for (SupplierShipment supplierShipment : inventory.getSupplierShipments()) {
-            if (supplierShipment.getStatus() == ShipmentStatus.COMPLETED) {
-                if (lastShipment == null || lastShipment.getArrivalTime().isBefore(supplierShipment.getArrivalTime())) {
-                        lastShipment = supplierShipment;
-                }
-            }
-            if (supplierShipment.getStatus() == ShipmentStatus.PLACED || supplierShipment.getStatus() == ShipmentStatus.COMING) {
-                if (supplierShipment == null || nextShipment.getArrivalTime().isAfter(supplierShipment.getArrivalTime())) {
-                    nextShipment = supplierShipment;
-                }
-            }
-        }
-         */
 
         SupplierShipment lastShipment = inventory.getSupplierShipments().stream()
                 .filter(shipment -> shipment.getStatus() == ShipmentStatus.COMPLETED)

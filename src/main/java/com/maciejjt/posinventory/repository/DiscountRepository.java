@@ -1,8 +1,6 @@
 package com.maciejjt.posinventory.repository;
 
 import com.maciejjt.posinventory.model.Discount;
-import com.maciejjt.posinventory.model.Sale;
-import com.maciejjt.posinventory.model.enums.SaleStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

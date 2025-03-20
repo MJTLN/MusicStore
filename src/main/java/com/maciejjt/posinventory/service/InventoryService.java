@@ -49,7 +49,7 @@ public class InventoryService {
         if (storage.getInventories().stream()
                 .anyMatch(inventory -> inventory.getProduct().getId().equals(productId))
         ) {
-            throw new WarehouseConflictException("THERE IS ALREADY A INVENTORY FOR THIS PRODUCT IN THIS STORAGE");
+            throw new WarehouseConflictException("There is already a inventory entity for this product in the specified storage");
         }
 
         Inventory inventory = Inventory.builder()
@@ -87,9 +87,8 @@ public class InventoryService {
 
 
     @Transactional
-    public InventoryDto updateInventoryLocation(Long inventoryId, InventoryRequest inventoryRequest) {
+    public InventoryDto updateInventory(Long inventoryId, InventoryRequest inventoryRequest) {
                 Inventory inventory =  findInventoryById(inventoryId);
-                //! CZY TO OPYMALNE ? MOZE DWIE ODDZIELNE METODY DO EDYYCJI TEGO I TEGO?
                 if(!inventory.getStorage().getId().equals(inventoryRequest.getStorageId())) {
                     Storage storage = findStorageById(inventoryRequest.getStorageId());
                     inventory.setStorage(storage);
@@ -149,6 +148,7 @@ public class InventoryService {
         return dtOservice.buildShipmentWithListingsDto(shipmentRepository.save(supplierShipment));
     }
 
+    @Transactional
     public Supplier createSupplier(SupplierRequest request) {
         Supplier supplier = Supplier.builder()
                 .companyName(request.getCompanyName())
@@ -282,7 +282,7 @@ public class InventoryService {
     public void deleteSupplierById(Long supplierId) {
         Supplier supplier = findSupplierById(supplierId);
         if (!supplier.getShipments().isEmpty()) {
-            throw new RuntimeException("Supplier's shipments need to be deleted before deleting supplier");
+            throw new DeletionException("Supplier's shipments need to be deleted before deleting supplier");
         } else {
             supplierRepository.delete(supplier);
         }
@@ -356,7 +356,8 @@ public class InventoryService {
 
         storageMovement.setUpdatedAt(LocalDateTime.now());
         storageMovement.setStatus(StorageMovementStatus.FINALIZED);
-        return null;
+
+        return dtOservice.buildStorageDto(storageMovementRepository.save(storageMovement).getNewStorage(),false);
     }
 
     @Transactional
@@ -401,7 +402,7 @@ public class InventoryService {
             storageMovement.setUpdatedAt(LocalDateTime.now());
             storageMovementRepository.save(storageMovement);
         } else {
-            throw new RuntimeException("CANNOT SEND MOVEMENT BEFORE IT IS ACCEPTED BY THE RECEIVING STORAGE");
+            throw new BadStatusException("Cannot send a movement before it is accepted by the receiving storage");
         }
     }
 
@@ -548,6 +549,7 @@ public class InventoryService {
                         for (int i = 1; i < 4 ; i++) {
                             positionRepository.save(Position.builder()
                                     .shelf(shelf)
+                                    .storage(storage    )
                                     .number(sectionNumber + "-" + aisleNumber + "_" + rackNumber + "-" + shelfNumber + "-" + i)
                                     .build());
                         }
@@ -564,9 +566,21 @@ public class InventoryService {
     public void putProductOnPosition(Long positionId, Long inventoryId, Integer quantity) {
         Position position = positionRepository.findById(positionId).orElseThrow(() -> new EntityNotFoundException("Position not found with id " + positionId));
         Inventory inventory = findInventoryById(inventoryId);
-        position.setInventory(inventory);
-        position.setQuantity(quantity);
-        positionRepository.save(position);
+
+        if (position.getInventory() != null) {
+            if (position.getInventory().equals(inventory))   {
+                updatePositionProductQuantity(positionId,quantity,true);
+            }
+        }
+
+        if (position.getQuantity() == null || position.getQuantity().equals(0)) {
+            position.setInventory(inventory);
+            position.setQuantity(quantity);
+            positionRepository.save(position);
+        } else {
+            throw new WarehouseConflictException("Position with id " + position + " is already occupied");
+        }
+
     }
 
     @Transactional

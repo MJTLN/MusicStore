@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "app_user")
 @EqualsAndHashCode(exclude = {"addresses","purchases"})
+@ToString(exclude = {"addresses","purchases"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

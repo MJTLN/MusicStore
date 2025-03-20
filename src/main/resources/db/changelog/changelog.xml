@@ -17,6 +17,9 @@
     <include file="db/changelog/changesets/sale_entity_new_fields.xml"/>
     <include file="db/changelog/changesets/warehouse_layout_entities.xml"/>
     <include file="db/changelog/changesets/detail_field_values_jsonb.xml"/>
+    <include file="db/changelog/changesets/storage_reference_on_position.xml"/>
+    <include file="db/changelog/changesets/detail_field_category_jointable.xml"/>
+
 
 </databaseChangeLog>
 

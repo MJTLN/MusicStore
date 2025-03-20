@@ -1,7 +1,6 @@
 package com.maciejjt.posinventory.model.warehouse;
 
 import com.maciejjt.posinventory.model.Inventory;
-import com.maciejjt.posinventory.model.Product;
 import com.maciejjt.posinventory.model.Storage;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,6 +18,9 @@ public class Position {
     @ManyToOne
     @JoinColumn(name = "SHELF_ID", referencedColumnName = "ID")
     private Shelf shelf;
+    @ManyToOne
+    @JoinColumn(name = "STORAGE_ID", referencedColumnName = "ID")
+    private Storage storage;
     @ManyToOne
     @JoinColumn(name = "INVENTORY_ID")
     private Inventory inventory;

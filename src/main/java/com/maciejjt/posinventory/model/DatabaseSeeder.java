@@ -6,6 +6,7 @@ import com.maciejjt.posinventory.model.requests.*;
 import com.maciejjt.posinventory.model.enums.InventoryLocationType;
 import com.maciejjt.posinventory.model.enums.ProductLabel;
 import com.maciejjt.posinventory.repository.*;
+import com.maciejjt.posinventory.service.CategoryService;
 import com.maciejjt.posinventory.service.InventoryService;
 import com.maciejjt.posinventory.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,8 @@ import java.util.*;
 @AllArgsConstructor
 public class DatabaseSeeder {
 
+    // FOR MANUAL TESTING PURPOSES
+
     private final ProductRepository productRepository;
    private final ProductService productService;
    private final StorageRepository storageRepository;
@@ -30,6 +33,8 @@ public class DatabaseSeeder {
    private final InventoryService inventoryService;
    private final UserRepository userRepository;
    private final PasswordEncoder passwordEncoder;
+   private final CategoryService categoryService;
+   private final CategoryRepository categoryRepository;
 
 
     @EventListener
@@ -46,22 +51,58 @@ public class DatabaseSeeder {
 
             userRepository.save(user);
         }
+
+        if(! categoryRepository.existsById(1L)) {
+            categoryService.createCategory(CategoryRequest.builder()
+                    .name("String instruments")
+                    .build()
+            );
+            categoryService.createCategory(CategoryRequest.builder()
+                    .name("Guitars")
+                    .parentId(1L)
+                    .build()
+            );
+            categoryService.createCategory(CategoryRequest.builder()
+                    .name("Electric guitars")
+                    .parentId(2L)
+                    .build()
+            );
+            categoryService.createCategory(CategoryRequest.builder()
+                    .name("Bass")
+                    .parentId(1L)
+                    .build()
+            );
+            categoryService.createCategory(CategoryRequest.builder()
+                    .name("Bass guitars")
+                    .parentId(4L)
+                    .build()
+            );
+        }
+
+
         if (!detailFieldRepository.existsById(1L)) {
+            List<Category> categories = List.of(categoryRepository.findById(3L).orElseThrow());
             DetailField detailField1 = DetailField.builder()
                     .name("pickup configuration")
+                    .categories(categories)
                     .build();
             DetailField detailField2 = DetailField.builder()
                     .name("wood type")
+                    .categories(categories)
                     .build();
             DetailField detailField3 = DetailField.builder()
                     .name("number of strings")
+                    .categories(categories)
                     .build();
             DetailField detailField4 = DetailField.builder()
                     .name("make")
+                    .categories(categories)
                     .build();
             DetailField detailField5 = DetailField.builder()
                     .name("electronics type")
+                    .categories(categories)
                     .build();
+
             detailFieldRepository.save(detailField1);
             detailFieldRepository.save(detailField2);
             detailFieldRepository.save(detailField3);

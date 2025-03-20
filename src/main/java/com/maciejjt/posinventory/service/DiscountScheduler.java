@@ -64,11 +64,7 @@ public class DiscountScheduler {
 
         List<Discount> discountsToEnd = discountRepository.findDiscountByActiveAndEndDateIsAfter(true, LocalDateTime.now());
 
-        discountsToEnd.forEach(
-                discount -> {
-                    discountService.endDiscount(discount);
-                }
-        );
+        discountsToEnd.forEach(discountService::endDiscount);
     }
 
 

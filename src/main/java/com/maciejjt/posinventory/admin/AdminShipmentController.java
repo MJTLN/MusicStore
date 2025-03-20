@@ -2,14 +2,11 @@ package com.maciejjt.posinventory.admin;
 
 import com.maciejjt.posinventory.model.dtos.SupplierShipmentDto;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
-import com.maciejjt.posinventory.model.requests.PositionRequest;
 import com.maciejjt.posinventory.model.requests.SupplierShipmentRequest;
 import com.maciejjt.posinventory.service.InventoryService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
 
 @RestController
 @Data

@@ -1,8 +1,6 @@
 package com.maciejjt.posinventory.admin;
 
-import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.dtos.*;
-import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import com.maciejjt.posinventory.model.requests.*;
 import com.maciejjt.posinventory.service.InventoryService;
 import com.maciejjt.posinventory.service.ProductService;
@@ -10,7 +8,6 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -29,7 +26,7 @@ public class   AdminInventoryController {
 
     @PutMapping("/inventory/{inventoryId}")
     public ResponseEntity<InventoryDto> updateInventory(@PathVariable Long inventoryId, @RequestBody InventoryRequest inventoryRequest) {
-        return ResponseEntity.ok(inventoryService.updateInventoryLocation(inventoryId, inventoryRequest));
+        return ResponseEntity.ok(inventoryService.updateInventory(inventoryId, inventoryRequest));
     }
 
     @GetMapping("/inventory/{inventoryId}")

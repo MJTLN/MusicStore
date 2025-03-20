@@ -1,6 +1,5 @@
 package com.maciejjt.posinventory.model.warehouse;
 
-import com.maciejjt.posinventory.model.Storage;
 import com.maciejjt.posinventory.model.WarehouseLayout;
 import jakarta.persistence.*;
 import lombok.*;

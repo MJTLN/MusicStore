@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="detail_field_category_jointable" author="admin">
+        <createTable tableName="DETAIL_FIELD_CATEGORY">
+            <column name="DETAIL_FIELD_ID" type="INTEGER"/>
+            <column name="CATEGORY_ID" type="INTEGER"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="DETAIL_FIELD_CATEGORY" baseColumnNames="DETAIL_FIELD_ID" constraintName="DETAIL_FIELD_ID_FK" referencedTableName="DETAIL_FIELD"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="DETAIL_FIELD_CATEGORY" baseColumnNames="CATEGORY_ID" constraintName="CATEGORY_ID_FK" referencedTableName="CATEGORY"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+</databaseChangeLog>

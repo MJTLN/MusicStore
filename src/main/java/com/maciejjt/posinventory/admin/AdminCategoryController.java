@@ -27,7 +27,5 @@ public class AdminCategoryController {
         return ResponseEntity.ok(categoryService.addProductsToCategory(productIds,categoryId));
     }
 
-    //edit
-    //delete
 
 }

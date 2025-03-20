@@ -2,15 +2,19 @@ package com.maciejjt.posinventory.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
+import com.maciejjt.posinventory.model.Category;
 import com.maciejjt.posinventory.model.DetailField;
 import com.maciejjt.posinventory.model.dtos.DetailFieldDto;
+import com.maciejjt.posinventory.model.requests.DetailFieldRequest;
 import com.maciejjt.posinventory.model.specifications.DetailFieldSpecification;
+import com.maciejjt.posinventory.repository.CategoryRepository;
 import com.maciejjt.posinventory.repository.DetailFieldRepository;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,15 +24,21 @@ public class DetailFieldService {
 
     private final DetailFieldRepository detailFieldRepository;
     private final DTOservice dtOservice;
+    private final CategoryRepository categoryRepository;
 
     public DetailField findById(Long id) {
         return detailFieldRepository.findById(id).orElseThrow();
     }
 
     @Transactional
-    public DetailField createDetailField(String name) {
+    public DetailField createDetailField(DetailFieldRequest request) {
+        List<Category> categories = new ArrayList<>();
+        if (request.getCategoryIds() != null) {
+           categories = categoryRepository.findAllById(request.getCategoryIds());
+        }
         DetailField detailField = DetailField.builder()
-                .name(name)
+                .name(request.getName())
+                .categories(categories)
                 .build();
         return detailFieldRepository.save(detailField);
     }
@@ -49,7 +59,6 @@ public class DetailFieldService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("error");
         }
-        detailFieldRepository.save(detailField);
-        return null;
+        return dtOservice.buildDetailFieldDto(detailFieldRepository.save(detailField));
     }
 }

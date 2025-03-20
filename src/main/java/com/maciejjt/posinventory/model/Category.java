@@ -21,7 +21,7 @@ public class Category {
     private Category parentCategory;
     @OneToMany(mappedBy = "parentCategory")
     private Set<Category> childCategories;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "CATEGORY_PRODUCT",
             joinColumns = @JoinColumn(name = "CATEGORY_ID"),
