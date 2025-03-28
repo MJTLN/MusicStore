@@ -54,10 +54,8 @@ public class DTOservice {
         Set<InventoryDto> inventoryDtos = new HashSet<>();
 
         product.getInventories().forEach(
-                inventoryLocation -> {
-                    inventoryDtos.add(
-                            buildInventoryLocationDto(inventoryLocation));
-                }
+                inventoryLocation -> inventoryDtos.add(
+                        buildInventoryLocationDto(inventoryLocation))
         );
 
         int totalQuantity = product.getInventories().stream()
@@ -122,16 +120,14 @@ public class DTOservice {
 
         Map<IProductDto, Integer> supplierShipmentItems = new HashMap<>();
 
-        supplierShipment.getSupplierShipmentItems().forEach(item -> {
-            supplierShipmentItems.put(
-                    ProductListingDto.builder()
-                            .id(item.getProduct().getId())
-                            .label(item.getProduct().getLabel())
-                            .name(item.getProduct().getName())
-                            .build(),
-                    item.getQuantity()
-            );
-        });
+        supplierShipment.getSupplierShipmentItems().forEach(item -> supplierShipmentItems.put(
+                ProductListingDto.builder()
+                        .id(item.getProduct().getId())
+                        .label(item.getProduct().getLabel())
+                        .name(item.getProduct().getName())
+                        .build(),
+                item.getQuantity()
+        ));
 
         SupplierDtoWithShipments supplier = SupplierDtoWithShipments.builder()
                 .id(supplierShipment.getSupplier().getId())
@@ -160,9 +156,7 @@ public class DTOservice {
         Set<SupplierShipmentDto> supplierShipmentWithListings = new HashSet<>();
 
         if (storage.getSupplierShipments() != null) {
-            storage.getSupplierShipments().forEach(item -> {
-                supplierShipmentWithListings.add(buildShipmentWithListingsDto(item));
-            });
+            storage.getSupplierShipments().forEach(item -> supplierShipmentWithListings.add(buildShipmentWithListingsDto(item)));
         }
 
         Set<IInventoryDto> inventoryLocationDtos = new HashSet<>();
@@ -239,7 +233,7 @@ public class DTOservice {
             return DiscountDto.builder()
                     .name(discount.getName())
                     .id(discount.getId())
-                    .isFixedAmount(discount.isFixedAmount())
+                    .isFixedAmount(discount.isFixedValue())
                     .endDate(discount.getEndDate())
                     .startDate(discount.getStartDate())
                     .saleId(saleId)
@@ -254,9 +248,7 @@ public class DTOservice {
 
         Set<DiscountDto> discountDtos = new HashSet<>();
 
-        sale.getDiscounts().forEach(discount -> {
-            discountDtos.add(buildDiscountDto(discount));
-        });
+        sale.getDiscounts().forEach(discount -> discountDtos.add(buildDiscountDto(discount)));
 
 
         return SaleDto.builder()
@@ -274,15 +266,11 @@ public class DTOservice {
 
         Set<Long> childrenIds = new HashSet<>();
 
-        category.getChildCategories().forEach(element -> {
-            childrenIds.add(element.getId());
-        });
+        category.getChildCategories().forEach(element -> childrenIds.add(element.getId()));
 
         Set<Long> productIds = new HashSet<>();
 
-        category.getProducts().forEach(product -> {
-            productIds.add(product.getId());
-        });
+        category.getProducts().forEach(product -> productIds.add(product.getId()));
 
         Long parentId = Optional.ofNullable(category.getParentCategory())
                 .map(Category::getId)
@@ -299,9 +287,7 @@ public class DTOservice {
 
     public SaleDtoWithProducts buildSaleDtoWithProducts(Sale sale) {
         Set<ProductListingDto> productListingDtos = new HashSet<>();
-        sale.getDiscounts().forEach(discount -> {
-            productListingDtos.add(buildProductListingDto(discount.getProduct()));
-        });
+        sale.getDiscounts().forEach(discount -> productListingDtos.add(buildProductListingDto(discount.getProduct())));
         return SaleDtoWithProducts.builder()
                 .description(sale.getDescription())
                 .name(sale.getName())
@@ -407,11 +393,9 @@ public class DTOservice {
 
     public CartDto buildCartDto(Cart cart) {
         Map<ProductListingDtoShort, Integer> products = new HashMap<>();
-        cart.getProducts().forEach(cartProduct -> {
-            products.put(
-                    buildProductListingDtoShort(cartProduct.getProduct()),
-                    cartProduct.getQuantity());
-        });
+        cart.getProducts().forEach(cartProduct -> products.put(
+                buildProductListingDtoShort(cartProduct.getProduct()),
+                cartProduct.getQuantity()));
         return CartDto.builder()
                 .id(cart.getId())
                 .products(products)

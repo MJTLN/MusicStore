@@ -35,5 +35,4 @@ public class ApiCategoryController {
     private ResponseEntity<List<DetailFieldDto>> getDetailsByCategory(@PathVariable Long categoryId) {
         return ResponseEntity.ok(detailFieldService.findDetailFieldByCategory(categoryId));
     }
-
 }

@@ -2,10 +2,7 @@ package com.maciejjt.posinventory.api;
 
 import com.maciejjt.posinventory.model.api.dtos.ApiProductDto;
 import com.maciejjt.posinventory.model.dtos.ProductListingDto;
-import com.maciejjt.posinventory.model.dtos.SaleDtoWithProducts;
 import com.maciejjt.posinventory.model.requests.ProductSearchRequest;
-import com.maciejjt.posinventory.service.DetailFieldService;
-import com.maciejjt.posinventory.service.DiscountService;
 import com.maciejjt.posinventory.service.ProductService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.Data;
@@ -13,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @Data

@@ -6,9 +6,7 @@
 
     <changeSet id="detail_field_values_jsonb" author="admin">
         <addColumn tableName="DETAIL_FIELD">
-            <column name="values" type="JSONB">
-
-            </column>
+            <column name="values" type="JSONB"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

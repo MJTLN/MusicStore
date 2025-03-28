@@ -11,6 +11,7 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 
@@ -20,12 +21,12 @@ import java.util.List;
 public class AdminProductController {
 
     private final ProductService productService;
-    private final InventoryService inventoryService;
-    private final DiscountService discountService;
 
     @PostMapping()
     public ResponseEntity<Long> createProduct(@RequestBody ProductRequest productRequest) {
-        return ResponseEntity.ok(productService.createProduct(productRequest).getId());
+        Long id = productService.createProduct(productRequest).getId();
+        URI location = URI.create("/admin/product/" + id);
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
@@ -39,7 +40,7 @@ public class AdminProductController {
     }
 
     @GetMapping("/by-upc")
-    public ResponseEntity<ProductDto> findProductByUPC(@RequestParam Long UPC) {
+    public ResponseEntity<ProductDto> findProductByUPC(@RequestParam Integer UPC) {
         return ResponseEntity.ok(productService.findProductByUPC(UPC));
     }
 
@@ -66,6 +67,6 @@ public class AdminProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

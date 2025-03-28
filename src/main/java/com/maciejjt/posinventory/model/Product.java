@@ -19,7 +19,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Long UPC;
+    private Integer UPC;
     @ElementCollection()
     @CollectionTable(name = "product_label", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "label")

@@ -28,7 +28,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public void createCategory(CategoryRequest categoryRequest) {
+    public Category createCategory(CategoryRequest categoryRequest) {
 
         Category.CategoryBuilder builder = Category.builder();
 
@@ -58,6 +58,8 @@ public class CategoryService {
                 categoryRepository.save(item);
             });
         }
+
+        return savedCategory;
      }
 
 

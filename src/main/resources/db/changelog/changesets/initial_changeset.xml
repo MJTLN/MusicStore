@@ -44,7 +44,7 @@
             <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="IS_FIXED_AMOUNT" type="BOOLEAN"/>
+            <column name="IS_FIXED_VALUE" type="BOOLEAN"/>
             <column name="AMOUNT" type="NUMERIC"/>
             <column name="NAME" type="VARCHAR(100)"/>
             <column name="SALE_ID" type="INTEGER"/>
@@ -52,16 +52,7 @@
             <column name="END_DATE" type="TIMESTAMP"/>
         </createTable>
     </changeSet>
-<!--
-    <changeSet id="5" author="maciej">
-        <createTable tableName="INVENTORY">
-            <column name="ID" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="QUANTITY" type="INTEGER"/>
-        </createTable>
-    </changeSet>
-    -->
+
     <changeSet id="6" author="maciej">
         <createTable tableName="INVENTORY">
             <column name="ID" type="INTEGER" autoIncrement="true">

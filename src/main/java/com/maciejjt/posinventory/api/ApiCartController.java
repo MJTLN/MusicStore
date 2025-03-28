@@ -4,6 +4,7 @@ import com.maciejjt.posinventory.exceptions.AuthenticationException;
 import com.maciejjt.posinventory.model.User;
 import com.maciejjt.posinventory.model.api.dtos.CartDto;
 import com.maciejjt.posinventory.repository.UserRepository;
+import com.maciejjt.posinventory.service.CartService;
 import com.maciejjt.posinventory.service.CustomUserDetails;
 import com.maciejjt.posinventory.service.ProductService;
 import lombok.Data;
@@ -17,32 +18,32 @@ import org.springframework.web.bind.annotation.*;
 public class ApiCartController {
 
     private final UserRepository userRepository;
-    private final ProductService productService;
+    private final CartService cartService;
     @PostMapping("{productId}/cart")
     public ResponseEntity<Void> addProductToCart(@PathVariable Long productId, @RequestParam Integer quantity, Authentication authentication) {
         User user = findUser(authentication);
-        productService.addToCart(productId, quantity,user);
+        cartService.addToCart(productId, quantity,user);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("{productId}/cart")
     public ResponseEntity<Void> updateCartProductQuantity(@PathVariable Long productId, @RequestParam Boolean addOrRemove, @RequestParam Integer quantity, Authentication authentication) {
         User user = findUser(authentication);
-        productService.updateCartProductQuantity(productId, addOrRemove,quantity,user);
-        return ResponseEntity.ok().build();
+        cartService.updateCartProductQuantity(productId, addOrRemove,quantity,user);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{productId}/cart")
     public ResponseEntity<Void> deleteProductFromCart(@PathVariable Long productId, Authentication authentication) {
         User user = findUser(authentication);
-        productService.deleteProductFromCart(productId, user);
-        return ResponseEntity.ok().build();
+        cartService.deleteProductFromCart(productId, user);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/cart")
     public ResponseEntity<CartDto> getUserCart(Authentication authentication) {
         User user = findUser(authentication);
-        return ResponseEntity.ok(productService.getCartByUser(user));
+        return ResponseEntity.ok(cartService.getCartByUser(user));
     }
 
     private User findUser(Authentication authentication) {

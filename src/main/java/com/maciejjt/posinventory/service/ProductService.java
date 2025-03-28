@@ -142,7 +142,7 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
-    public ProductDto findProductByUPC(Long upc) {
+    public ProductDto findProductByUPC(Integer upc) {
             Product product = productRepository.findProductByUPC(upc).orElseThrow(() -> new EntityNotFoundException("No product has been found with UPC " + upc));
             return dtOservice.buildProductDto(product);
     }
@@ -150,77 +150,5 @@ public class ProductService {
     public ApiProductDto findApiProductById(Long id) {
         Product product = findProductById(id);
         return dtOservice.buildApiProductDto(product);
-    }
-
-    @Transactional
-    public void addToCart(Long productId, Integer quantity, User user) {
-
-        Cart cart = user.getCart();
-
-        Optional<CartProduct> existingCartProduct = cart.getProducts().stream()
-                .filter(cartProduct -> cartProduct.getProduct().getId().equals(productId))
-                .findFirst();
-
-        if (existingCartProduct.isPresent()) {
-
-            CartProduct cartProduct = existingCartProduct.get();
-            cartProduct.addQuantity(quantity);
-            cartProductRepository.save(cartProduct);
-
-        } else {
-
-            Product product = findProductById(productId);
-
-            CartProduct newCartProduct = CartProduct.builder()
-                    .product(product)
-                    .quantity(quantity)
-                    .cart(cart)
-                    .build();
-
-            CartProduct cartProduct = cartProductRepository.save(newCartProduct);
-
-            cart.getProducts().add(cartProduct);
-            cartRepository.save(cart);
-        }
-    }
-
-    public CartDto getCartByUser(User user) {
-        Cart cart = user.getCart();
-        return dtOservice.buildCartDto(cart);
-    }
-
-    @Transactional
-    public void updateCartProductQuantity(Long productId, boolean addOrRemove, Integer quantity, User user) {
-
-        Cart cart = user.getCart();
-        Optional<CartProduct> cartProduct = cart.getProducts().stream()
-                .filter(entry -> entry.getProduct().getId().equals(productId))
-                .findFirst();
-
-        if (cartProduct.isEmpty()) {
-            throw new EntityNotFoundException("No product in cart with id " + productId);
-        }
-
-        if (addOrRemove) {
-            cartProduct.get().addQuantity(quantity);
-        } else {
-            cartProduct.get().removeQuantity(quantity);
-        }
-
-        cartProductRepository.save(cartProduct.get());
-    }
-
-    @Transactional
-    public void deleteProductFromCart(Long productId, User user) {
-        Cart cart = user.getCart();
-        Optional<CartProduct> cartProduct = cart.getProducts().stream()
-                .filter(entry -> entry.getProduct().getId().equals(productId))
-                .findFirst();
-
-        cartProduct.ifPresent(product -> {
-                    cart.getProducts().remove(product);
-                    cartProductRepository.delete(product);
-                }
-        );
     }
 }

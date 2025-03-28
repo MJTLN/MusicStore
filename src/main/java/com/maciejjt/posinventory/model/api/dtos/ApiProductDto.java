@@ -13,7 +13,7 @@ import java.util.Set;
 public class ApiProductDto {
     private Long id;
     private String name;
-    private Long UPC;
+    private Integer UPC;
     private Set<ProductDetailDto> productDetails;
     private DiscountDto discount;
     private Set<ProductLabel> label;

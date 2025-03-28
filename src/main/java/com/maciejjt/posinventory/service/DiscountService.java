@@ -30,14 +30,14 @@ public class DiscountService {
     private final DTOservice dtOservice;
 
     @Transactional
-    public void addDiscountToProduct(Long productId, DiscountRequest discountRequest) {
+    public Discount addDiscountToProduct(Long productId, DiscountRequest discountRequest) {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow();
 
         Discount discount = Discount.builder()
                 .name(discountRequest.getName())
-                .isFixedAmount(discountRequest.isFixedAmount())
+                .isFixedValue(discountRequest.isFixedValue())
                 .amount(discountRequest.getAmount())
                 .startDate(discountRequest.getStartDate())
                 .endDate(discountRequest.getEndDate())
@@ -49,6 +49,8 @@ public class DiscountService {
         product.setDiscount(createdDiscount);
 
         productRepository.save(product);
+
+        return createdDiscount;
     }
 
     @Transactional

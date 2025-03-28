@@ -30,14 +30,13 @@ public class PurchaseService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
-   // private final WarehouseLocationRepository warehouseLocationRepository;
     private final InventoryRepository inventoryRepository;
     private final DTOservice dtOservice;
     private final PurchaseIssueRepository purchaseIssueRepository;
     private final PositionRepository positionRepository;
 
     @Transactional
-    public PurchaseDto createPurchase(PurchaseRequest purchaseRequest, User user) {
+    public Purchase createPurchase(PurchaseRequest purchaseRequest, User user) {
 
         Set<Product> products =  new HashSet<>(productRepository.findAllById(purchaseRequest.getProductIds()));
 
@@ -45,7 +44,7 @@ public class PurchaseService {
                 .map( product -> {
                     BigDecimal price = product.getPrice();
                     if (product.getDiscount() != null && product.getDiscount().isActive()) {
-                        if (product.getDiscount().isFixedAmount()) {
+                        if (product.getDiscount().isFixedValue()) {
                             price = price.subtract(new BigDecimal(product.getDiscount().getAmount()));
                         } else {
                             BigDecimal multiplicator = BigDecimal.ONE.subtract(new BigDecimal(product.getDiscount().getAmount()));
@@ -85,7 +84,7 @@ public class PurchaseService {
 
         purchase.setPayment(payment);
 
-        return dtOservice.buildPurchaseDto(purchaseRepository.save(purchase));
+        return purchaseRepository.save(purchase);
     }
 
     @Transactional
@@ -149,7 +148,7 @@ public class PurchaseService {
     }
 
     @Transactional
-    public void createIssueForPurchase(Long purchaseId, PurchaseIssueRequest purchaseIssueRequest) {
+    public PurchaseIssue createIssueForPurchase(Long purchaseId, PurchaseIssueRequest purchaseIssueRequest) {
         Purchase purchase = findPurchaseById(purchaseId);
         PurchaseIssue purchaseIssue = purchaseIssueRepository.save(
                 PurchaseIssue.builder()
@@ -163,6 +162,8 @@ public class PurchaseService {
 
         purchase.setPurchaseIssue(purchaseIssue);
         purchaseRepository.save(purchase);
+
+        return purchaseIssue;
     }
 
     @Transactional

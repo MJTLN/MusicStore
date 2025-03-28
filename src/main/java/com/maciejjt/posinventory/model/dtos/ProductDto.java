@@ -13,7 +13,7 @@ import java.util.Set;
 public class ProductDto implements IProductDto {
      private Long id;
      private String name;
-     private Long UPC;
+     private Integer UPC;
      private BigDecimal price;
      private LocalDateTime createdAt;
      private LocalDateTime updatedAt;

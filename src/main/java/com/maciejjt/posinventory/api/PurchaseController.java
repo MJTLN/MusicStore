@@ -13,6 +13,8 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 import java.util.Set;
 
 @RestController
@@ -27,7 +29,9 @@ public class PurchaseController {
     @PostMapping()
     public ResponseEntity<PurchaseDto> createPurchase(@RequestBody PurchaseRequest purchaseRequest, Authentication authentication) {
         User user = findUser(authentication);
-        return ResponseEntity.ok(purchaseService.createPurchase(purchaseRequest, user));
+        Long id = purchaseService.createPurchase(purchaseRequest, user).getId();
+        URI location = URI.create("/purchase/" + id);
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/{purchaseId}")
@@ -37,8 +41,9 @@ public class PurchaseController {
 
     @PostMapping("/issue/{purchaseId}")
     public ResponseEntity<Void> createIssueForPurchase(@PathVariable Long purchaseId, @RequestBody PurchaseIssueRequest purchaseIssueRequest) {
-        purchaseService.createIssueForPurchase(purchaseId, purchaseIssueRequest);
-        return ResponseEntity.ok().build();
+        Long id = purchaseService.createIssueForPurchase(purchaseId, purchaseIssueRequest).getId();
+        URI location = URI.create("/purchase/issue/" + id);
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/history")

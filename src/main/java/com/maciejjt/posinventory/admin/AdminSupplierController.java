@@ -5,40 +5,45 @@ import com.maciejjt.posinventory.model.dtos.SupplierDto;
 import com.maciejjt.posinventory.model.dtos.SupplierDtoWithShipments;
 import com.maciejjt.posinventory.model.requests.SupplierRequest;
 import com.maciejjt.posinventory.service.InventoryService;
+import com.maciejjt.posinventory.service.SupplierService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @Data
 @RequestMapping("/admin/supplier")
 public class AdminSupplierController {
 
-    private final InventoryService inventoryService;
+    private final SupplierService supplierService;
 
     @PostMapping()
     public ResponseEntity<Supplier> createSupplier(@RequestBody SupplierRequest request) {
-        return ResponseEntity.ok(inventoryService.createSupplier(request));
+        Long id = supplierService.createSupplier(request).getId();
+        URI location = URI.create("/admin/supplier/" + id);
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{supplierId}")
-    public ResponseEntity<Supplier> updateSupplier(@PathVariable Long supplierId, @RequestBody SupplierRequest supplierRequest) {
-        return ResponseEntity.ok(inventoryService.updateSupplier(supplierId,supplierRequest));
+    public ResponseEntity<SupplierDto> updateSupplier(@PathVariable Long supplierId, @RequestBody SupplierRequest supplierRequest) {
+        return ResponseEntity.ok(supplierService.updateSupplier(supplierId,supplierRequest));
     }
 
     @GetMapping("/{supplierId}")
     public ResponseEntity<SupplierDto> findSupplierById(@PathVariable Long supplierId) {
-        return ResponseEntity.ok(inventoryService.getSupplierById(supplierId));
+        return ResponseEntity.ok(supplierService.getSupplierById(supplierId));
     }
 
     @GetMapping("/{supplierId}/with-shipments")
     public ResponseEntity<SupplierDtoWithShipments> findSupplierWithShipmentsById(@PathVariable Long supplierId) {
-        return ResponseEntity.ok(inventoryService.findSupplierWithShipmentsById(supplierId));
+        return ResponseEntity.ok(supplierService.findSupplierWithShipmentsById(supplierId));
     }
 
     @DeleteMapping("/{supplierId}")
     public ResponseEntity<Void> deleteSupplierById(@PathVariable Long supplierId) {
-        inventoryService.deleteSupplierById(supplierId);
-        return ResponseEntity.ok().build();
+        supplierService.deleteSupplierById(supplierId);
+        return ResponseEntity.noContent().build();
     }
 }

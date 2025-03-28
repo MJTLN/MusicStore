@@ -10,7 +10,6 @@
     <include file="db/changelog/changesets/supplier_entity_changes.xml"/>
     <include file="db/changelog/changesets/product_label_table.xml"/>
     <include file="db/changelog/changesets/add_inventory_location_shipment_relationship.xml"/>
-    <include file="db/changelog/changesets/warehouse_location_entity.xml"/>
     <include file="db/changelog/changesets/storage_movement_acceptation_entity.xml"/>
     <include file="db/changelog/changesets/issue_entity.xml"/>
     <include file="db/changelog/changesets/add_cart_entity.xml"/>

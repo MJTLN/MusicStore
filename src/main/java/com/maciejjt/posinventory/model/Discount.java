@@ -15,7 +15,7 @@ public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private boolean isFixedAmount;
+    private boolean isFixedValue;
     private boolean active;
     private Long amount;
     @OneToOne(mappedBy = "discount")

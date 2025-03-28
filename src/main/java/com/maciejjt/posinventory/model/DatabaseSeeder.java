@@ -6,9 +6,7 @@ import com.maciejjt.posinventory.model.requests.*;
 import com.maciejjt.posinventory.model.enums.InventoryLocationType;
 import com.maciejjt.posinventory.model.enums.ProductLabel;
 import com.maciejjt.posinventory.repository.*;
-import com.maciejjt.posinventory.service.CategoryService;
-import com.maciejjt.posinventory.service.InventoryService;
-import com.maciejjt.posinventory.service.ProductService;
+import com.maciejjt.posinventory.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -23,7 +21,9 @@ import java.util.*;
 @AllArgsConstructor
 public class DatabaseSeeder {
 
+    //
     // FOR MANUAL TESTING PURPOSES
+    //
 
     private final ProductRepository productRepository;
    private final ProductService productService;
@@ -35,7 +35,8 @@ public class DatabaseSeeder {
    private final PasswordEncoder passwordEncoder;
    private final CategoryService categoryService;
    private final CategoryRepository categoryRepository;
-
+   private final StorageService storageService;
+   private final SupplierShipmentService supplierShipmentService;
 
     @EventListener
     public void seed(ContextRefreshedEvent event) {
@@ -124,7 +125,7 @@ public class DatabaseSeeder {
 
             ProductRequest productRequest1 = ProductRequest.builder()
                     .categoryIds(categoryIds)
-                    .UPC(12345678L)
+                    .UPC(12345678)
                     .name("Fender Player Telecaster SH BL")
                     .productDetails(productDetails1)
                     .description("new super duper limited edition guitar")
@@ -141,7 +142,7 @@ public class DatabaseSeeder {
 
             ProductRequest productRequest2 = ProductRequest.builder()
                     .categoryIds(categoryIds)
-                    .UPC(12345678L)
+                    .UPC(12345678)
                     .name("PRS Silversky Active")
                     .productDetails(productDetails2)
                     .description("nice guitar but a bit expensive")
@@ -158,7 +159,7 @@ public class DatabaseSeeder {
 
             ProductRequest productRequest3 = ProductRequest.builder()
                     .categoryIds(categoryIds)
-                    .UPC(12345678L)
+                    .UPC(12345678)
                     .name("Squier Contemproary Jaguar HH CR")
                     .productDetails(productDetails3)
                     .labels(new HashSet<>(Set.of(ProductLabel.DISCOUNT)))
@@ -174,7 +175,7 @@ public class DatabaseSeeder {
 
             ProductRequest productRequest4 = ProductRequest.builder()
                     .categoryIds(categoryIds)
-                    .UPC(12345678L)
+                    .UPC(12345678)
                     .name("Squier Active Tele SH")
                     .productDetails(productDetails4)
                     .labels(new HashSet<>(Set.of(ProductLabel.DISCOUNT)))
@@ -393,15 +394,10 @@ public class DatabaseSeeder {
                     ))
                     .build();
 
-            inventoryService.createWarehouseLayout(storage1Request);
-            inventoryService.createWarehouseLayout(storage2Request);
-            inventoryService.createWarehouseLayout(storage3Request);
-            inventoryService.createWarehouseLayout(storage4Request);
-
-            inventoryService.createWarehouseLayout(storage1Request);
-            inventoryService.createWarehouseLayout(storage2Request);
-            inventoryService.createWarehouseLayout(storage3Request);
-            inventoryService.createWarehouseLayout(storage4Request);
+            storageService.createWarehouseLayout(storage1Request);
+            storageService.createWarehouseLayout(storage2Request);
+            storageService.createWarehouseLayout(storage3Request);
+            storageService.createWarehouseLayout(storage4Request);
 
             /*
             inventoryService.putProductsOnRack(product1,);
@@ -419,7 +415,7 @@ public class DatabaseSeeder {
 
             inventoryService.putProductsOnRack();
             inventoryService.putProductsOnRack();
-*/
+        */
 
 
             Supplier supplier = Supplier.builder()
@@ -472,8 +468,8 @@ public class DatabaseSeeder {
                     .build();
 
 
-            inventoryService.createShipment(supplierShipment1);
-            inventoryService.createShipment(supplierShipment2);
+            supplierShipmentService.createShipment(supplierShipment1);
+            supplierShipmentService.createShipment(supplierShipment2);
 
 
         }

@@ -40,6 +40,6 @@ public class AdminPurchaseController {
     @PatchMapping("/issue/{issueId}")
     public ResponseEntity<Void> updateIssueStatus(@PathVariable Long issueId, @RequestParam PurchaseIssueStatus purchaseIssueStatus) {
         purchaseService.updateIssueStatus(issueId, purchaseIssueStatus);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

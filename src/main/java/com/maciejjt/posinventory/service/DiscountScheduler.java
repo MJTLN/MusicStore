@@ -44,9 +44,7 @@ public class DiscountScheduler {
         List<Sale> salesToEnd = saleRepository.findSaleByStatusAndEndDateIsAfter(SaleStatus.IN_PROGRESS, LocalDateTime.now());
 
         salesToEnd.forEach(
-                sale -> {
-                    discountService.endSale(sale.getId());
-                }
+                sale -> discountService.endSale(sale.getId())
         );
     }
 
@@ -66,9 +64,4 @@ public class DiscountScheduler {
 
         discountsToEnd.forEach(discountService::endDiscount);
     }
-
-
-
-
-
 }

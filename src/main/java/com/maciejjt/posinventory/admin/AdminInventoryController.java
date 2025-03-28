@@ -8,42 +8,42 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Set;
 
 @RestController
 @Data
-@RequestMapping("/admin")
+@RequestMapping("/admin/inventory")
 public class   AdminInventoryController {
 
     private final InventoryService inventoryService;
     private final ProductService productService;
 
-    @PostMapping("/inventory/{productId}")
+    @PostMapping("/{productId}")
     public ResponseEntity<Void> createInventoryForProduct(@PathVariable Long productId, @RequestBody InventoryRequest inventoryRequest) {
-        inventoryService.createInventoryForProduct(productId, inventoryRequest);
-        return ResponseEntity.ok().build();
+        Long id = inventoryService.createInventoryForProduct(productId, inventoryRequest).getId();
+        URI location = URI.create("/admin/inventory" + id);
+        return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/inventory/{inventoryId}")
+    @PutMapping("/{inventoryId}")
     public ResponseEntity<InventoryDto> updateInventory(@PathVariable Long inventoryId, @RequestBody InventoryRequest inventoryRequest) {
         return ResponseEntity.ok(inventoryService.updateInventory(inventoryId, inventoryRequest));
     }
 
-    @GetMapping("/inventory/{inventoryId}")
+    @GetMapping("/{inventoryId}")
     public ResponseEntity<InventoryDto> getInventoryById(@PathVariable Long inventoryId) {
         return ResponseEntity.ok(inventoryService.getInventoryById(inventoryId));
     }
 
-    @DeleteMapping("/inventory/{inventoryId}")
+    @DeleteMapping("/{inventoryId}")
     public ResponseEntity<Void> deleteInventoryById(@PathVariable Long inventoryId) {
-        inventoryService.deleteInventoryLocationById(inventoryId);
-        return ResponseEntity.ok().build();
+        inventoryService.deleteInventoryById(inventoryId);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/inventory/{inventoryId}/positions")
+    @GetMapping("/{inventoryId}/positions")
     public ResponseEntity<Set<PositionDto>> getPositionsForInventory(@PathVariable Long inventoryId) {
-        return ResponseEntity.ok(inventoryService.getPositionsForInventory(inventoryId));
+        return ResponseEntity.ok(inventoryService.storageService.getPositionsForInventory(inventoryId ));
     }
-
-
 }
