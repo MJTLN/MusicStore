@@ -3,7 +3,7 @@ package com.maciejjt.posinventory.model;
 import com.maciejjt.posinventory.model.enums.Role;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import com.maciejjt.posinventory.model.requests.*;
-import com.maciejjt.posinventory.model.enums.InventoryLocationType;
+import com.maciejjt.posinventory.model.enums.InventoryType;
 import com.maciejjt.posinventory.model.enums.ProductLabel;
 import com.maciejjt.posinventory.repository.*;
 import com.maciejjt.posinventory.service.*;
@@ -37,6 +37,7 @@ public class DatabaseSeeder {
    private final CategoryRepository categoryRepository;
    private final StorageService storageService;
    private final SupplierShipmentService supplierShipmentService;
+   private final DiscountService discountService;
 
     @EventListener
     public void seed(ContextRefreshedEvent event) {
@@ -114,7 +115,7 @@ public class DatabaseSeeder {
         if (!productRepository.existsById(1L)) {
 
             HashSet<Long> categoryIds = new HashSet<>();
-            categoryIds.add(0L);
+            categoryIds.add(3L);
 
             HashMap<Long, String> productDetails1 = new HashMap<>();
             productDetails1.put(1L, "SH");
@@ -192,22 +193,22 @@ public class DatabaseSeeder {
             Product product4 = productService.createProduct(productRequest4);
 
             Storage storageRequest1 = Storage.builder()
-                    .type(InventoryLocationType.WAREHOUSE)
+                    .type(InventoryType.WAREHOUSE)
                     .address("GDANSK, JANA PAWŁA II 92, 12-123")
                     .build();
 
             Storage storageRequest2 = Storage.builder()
-                    .type(InventoryLocationType.WAREHOUSE)
+                    .type(InventoryType.WAREHOUSE)
                     .address("GDYNIA, ŚWIĘTOJANSKA 2, 12-123")
                     .build();
 
             Storage storageRequest3 = Storage.builder()
-                    .type(InventoryLocationType.STORE)
+                    .type(InventoryType.STORE)
                     .address("GDANSK, GRUNWALDZKA 42, 12-123")
                     .build();
 
             Storage storageRequest4 = Storage.builder()
-                    .type(InventoryLocationType.STORE)
+                    .type(InventoryType.STORE)
                     .address("SOPOT, MONTE CASSINO 111, 12-123")
                     .build();
 
@@ -470,6 +471,59 @@ public class DatabaseSeeder {
 
             supplierShipmentService.createShipment(supplierShipment1);
             supplierShipmentService.createShipment(supplierShipment2);
+
+
+            DiscountRequest discount1 = DiscountRequest.builder()
+                            .name(null)
+                            .amount(25)
+                            .isFixedValue(false)
+                            .startDate(LocalDateTime.now())
+                            .endDate(LocalDateTime.now().plusDays(10))
+                            .build();
+
+            DiscountRequest discount2 = DiscountRequest.builder()
+                    .name(null)
+                    .amount(100)
+                    .isFixedValue(true)
+                    .startDate(LocalDateTime.now())
+                    .endDate(LocalDateTime.now().plusDays(10))
+                    .build();
+
+            DiscountRequest discount3 = DiscountRequest.builder()
+                    .name(null)
+                    .amount(25)
+                    .isFixedValue(false)
+                    .startDate(LocalDateTime.now().plusDays(2))
+                    .endDate(LocalDateTime.now().plusDays(10))
+                    .build();
+
+            DiscountRequest discount4 = DiscountRequest.builder()
+                    .name(null)
+                    .amount(25)
+                    .isFixedValue(false)
+                    .startDate(LocalDateTime.now().plusDays(2))
+                    .endDate(LocalDateTime.now().plusDays(10))
+                    .build();
+
+
+            discountService.addDiscountToProduct(1L,discount1);
+            discountService.addDiscountToProduct(2L,discount2);
+            discountService.addDiscountToProduct(3L,discount3);
+            discountService.addDiscountToProduct(4L,discount4);
+
+            Set<Long> discountids = new HashSet<>();
+            discountids.add(3L);
+            discountids.add(4L);
+
+            SaleRequest saleRequest1 = SaleRequest.builder()
+                    .discountIds(discountids)
+                    .name("SUMMER SALE")
+                    .isAggregating(false)
+                    .startDate(LocalDateTime.now().plusDays(2))
+                    .endDate(LocalDateTime.now().plusDays(10))
+                    .build();
+
+            discountService.createSale(saleRequest1);
 
 
         }

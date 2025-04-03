@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StorageMovementItemDto {
     Long id;
-    ProductListingDto product;
+    ProductListingDtoShort product;
     Integer quantity;
     boolean accepted;
 }

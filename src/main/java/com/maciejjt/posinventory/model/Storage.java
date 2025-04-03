@@ -1,6 +1,6 @@
 package com.maciejjt.posinventory.model;
 
-import com.maciejjt.posinventory.model.enums.InventoryLocationType;
+import com.maciejjt.posinventory.model.enums.InventoryType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,9 +16,9 @@ public class Storage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private InventoryLocationType type;
+    private InventoryType type;
     private String address;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WAREHOUSE_LAYOUT_ID", referencedColumnName = "ID")
     private WarehouseLayout warehouseLayout;
     @OneToMany(mappedBy = "storage")

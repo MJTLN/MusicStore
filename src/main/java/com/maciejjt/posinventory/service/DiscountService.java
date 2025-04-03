@@ -59,6 +59,9 @@ public class DiscountService {
         Sale sale = Sale.builder()
                 .name(saleRequest.getName())
                 .description(saleRequest.getDescription())
+                .startDate(saleRequest.getStartDate())
+                .endDate(saleRequest.getEndDate())
+                .isAggregating(saleRequest.isAggregating())
                 .build();
 
         Sale savedSale = saleRepository.save(sale);
@@ -85,7 +88,8 @@ public class DiscountService {
     }
 
     public SaleDto getSaleById(Long saleId) {
-        Sale sale = findSaleById(saleId);
+        Sale sale = saleRepository.findSaleWithDiscountById(saleId)
+                .orElseThrow(() -> new EntityNotFoundException("Sale not found with id: " + saleId));
         return dtOservice.buildSaleDto(sale);
     }
 
@@ -210,7 +214,7 @@ public class DiscountService {
 
 
     public SaleDtoWithProducts getSaleDtoWithProducts(Long id) {
-        Sale sale = findSaleById(id);
+        Sale sale = saleRepository.findSaleWithProductById(id).orElseThrow(() -> new EntityNotFoundException("Sale not found with id: " + id));
         return dtOservice.buildSaleDtoWithProducts(sale);
     }
 

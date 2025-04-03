@@ -68,16 +68,25 @@ public class CategoryService {
         Set<Product> products = new HashSet<>();
 
         productIds.forEach(id -> {
-            Product product = productRepository.findById(id)
-                    .orElseThrow();
+            Product product = findProductById(id);
             products.add(product);
         });
 
         Category category = findCategoryById(categoryId);
 
-        category.setProducts(products);
+        addProductsToCategory(products, category);
 
-        return dtOservice.buildCategoryDto(categoryRepository.save(category));
+        return dtOservice.buildCategoryDto(category);
+    }
+
+    @Transactional
+    public void addProductsToCategory(Set<Product> products, Category category) {
+        category.getProducts().addAll(products);
+        categoryRepository.save(category);
+
+        if (category.getParentCategory() != null) {
+            addProductsToCategory(products, category.getParentCategory());
+        }
     }
 
     private Category findCategoryById(Long id) {
@@ -92,9 +101,20 @@ public class CategoryService {
     }
 
     public List<CategoryDto> getChildCategoriesById(Long categoryId) {
-        Category category = findCategoryById(categoryId);
+        Category category = categoryRepository.findCategoryWChildrenById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id " + categoryId));
+
         return category.getChildCategories().stream()
                 .map(dtOservice::buildCategoryDto)
                 .toList();
+    }
+
+    public Product findProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id " + id));
+    }
+
+    public void deleteCategory(Long categoryId) {
+        Category category = findCategoryById(categoryId);
+        categoryRepository.delete(category);
     }
 }

@@ -14,11 +14,11 @@ package com.maciejjt.posinventory.model;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID")
         private Product product;
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "FIELD_ID", referencedColumnName = "ID")
         private DetailField detailField;
 

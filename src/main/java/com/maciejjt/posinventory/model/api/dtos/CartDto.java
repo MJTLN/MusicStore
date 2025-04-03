@@ -1,14 +1,13 @@
 package com.maciejjt.posinventory.model.api.dtos;
 
-import com.maciejjt.posinventory.model.dtos.ProductListingDtoShort;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Map;
+import java.util.List;
 
 @Data
 @Builder
-public class CartDto {
+public class  CartDto {
     Long id;
-    Map<ProductListingDtoShort, Integer> products;
+    List<CartDtoItem> products;
 }

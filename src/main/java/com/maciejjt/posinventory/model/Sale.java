@@ -24,6 +24,7 @@ public class Sale {
     @OneToMany(mappedBy = "sale")
     private Set<Discount> discounts;
     private Boolean isAggregating;
+    @Enumerated(EnumType.STRING)
     private SaleStatus status;
     private LocalDateTime startDate;
     private LocalDateTime endDate;

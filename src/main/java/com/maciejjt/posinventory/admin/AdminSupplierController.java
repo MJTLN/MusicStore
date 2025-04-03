@@ -4,7 +4,6 @@ import com.maciejjt.posinventory.model.Supplier;
 import com.maciejjt.posinventory.model.dtos.SupplierDto;
 import com.maciejjt.posinventory.model.dtos.SupplierDtoWithShipments;
 import com.maciejjt.posinventory.model.requests.SupplierRequest;
-import com.maciejjt.posinventory.service.InventoryService;
 import com.maciejjt.posinventory.service.SupplierService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;

@@ -32,12 +32,10 @@ public class ProductSpecification {
 
             if (request.getExactValue() != null) {
                 List<Predicate> tempPredicates = new ArrayList<>();
-                request.getExactValue().forEach((key, value) -> {
-                    tempPredicates.add(criteriaBuilder.and(
-                            criteriaBuilder.equal(productDetailJoin.get("name"), key),
-                            criteriaBuilder.equal(productDetailJoin.get("value"), value)
-                    ));
-                });
+                request.getExactValue().forEach((key, value) -> tempPredicates.add(criteriaBuilder.and(
+                        criteriaBuilder.equal(productDetailJoin.get("name"), key),
+                        criteriaBuilder.equal(productDetailJoin.get("value"), value)
+                )));
                 predicates.add(criteriaBuilder.or(tempPredicates.toArray(new Predicate[0])));
             }
 

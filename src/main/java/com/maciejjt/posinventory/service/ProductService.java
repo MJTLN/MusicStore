@@ -4,7 +4,6 @@ import com.maciejjt.posinventory.exceptions.DeletionException;
 import com.maciejjt.posinventory.exceptions.EntityNotFoundException;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.api.dtos.ApiProductDto;
-import com.maciejjt.posinventory.model.api.dtos.CartDto;
 import com.maciejjt.posinventory.model.dtos.*;
 import com.maciejjt.posinventory.model.requests.ProductRequest;
 import com.maciejjt.posinventory.model.requests.ProductSearchRequest;
@@ -15,6 +14,9 @@ import com.maciejjt.posinventory.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,7 @@ public class ProductService {
     private final CartProductRepository cartProductRepository;
     private final CartRepository cartRepository;
     private final ShipmentRepository shipmentRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public Product createProduct(ProductRequest productRequest) {
@@ -46,7 +49,6 @@ public class ProductService {
                 .UPC(productRequest.getUPC())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .categories(categories)
                 .description(productRequest.getDescription())
                 .descriptionShort(productRequest.getDescriptionShort())
                 .label(productRequest.getLabels())
@@ -60,33 +62,33 @@ public class ProductService {
         );
 
         addedProduct.setProductDetails(productDetails);
+        addedProduct.setCategories(categories);
 
         return productRepository.save(addedProduct);
 
     }
 
     public ProductDto getProductById(Long id) {
-        return dtOservice.buildProductDto(findProductById(id));
+        Product product = productRepository.findProductForAdminById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id " + id));
+        return dtOservice.buildProductDto(product);
     }
 
     public Product findProductById(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id " + id));
     }
 
-    public List<ProductDto> findProductsByDetails(ProductSearchRequest request) {
+    public Page<ProductDto> findProductsByDetails(ProductSearchRequest request, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
         Specification<Product> specification = ProductSpecification.filterByDetails(request);
-        List<Product> products = productRepository.findAll(specification);
-        List<ProductDto> productDtos = new ArrayList<>();
-        products.forEach(product -> productDtos.add(dtOservice.buildProductDto(product)));
-        return productDtos;
+        Page<Product> products = productRepository.findAll(specification, pageable);
+        return products.map(dtOservice::buildProductDto);
     }
 
-    public List<ProductListingDto> findProductListingsByDetails(ProductSearchRequest request) {
+    public Page<ProductListingDto> findProductListingsByDetails(ProductSearchRequest request, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
         Specification<Product> specification = ProductSpecification.filterByDetails(request);
-        List<Product> products = productRepository.findAll(specification);
-        List<ProductListingDto> productListingDtos = new ArrayList<>();
-        products.forEach(product -> productListingDtos.add(dtOservice.buildProductListingDto(product)));
-        return productListingDtos;
+        Page<Product> products = productRepository.findAll(specification, pageable);
+        return products.map(dtOservice::buildProductListingDto);
     }
 
     @Transactional
@@ -148,7 +150,23 @@ public class ProductService {
     }
 
     public ApiProductDto findApiProductById(Long id) {
-        Product product = findProductById(id);
+        Product product = findProductForApi(id);
         return dtOservice.buildApiProductDto(product);
     }
+
+    public Page<ProductListingDto> findProductListingsByCategory(Long id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Category category = findCategoryById(id);
+        return productRepository.findProductByCategoriesContaining(category,pageable)
+                .map(dtOservice::buildProductListingDto);
+    }
+
+    private Product findProductForApi(Long id) {
+        return productRepository.findProductForApiById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id " + id));
+    }
+
+    private Category findCategoryById(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Category not found with id " + id));
+    }
+
 }

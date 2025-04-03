@@ -12,5 +12,5 @@ public class SupplierDtoWithShipments {
     private String companyName;
     private String officialAddress;
     private String contactInfo;
-    private Set<SupplierShipmentDto> supplierShipments;
+    private Set<SupplierShipmentDtoNoSupplier> supplierShipments;
 }

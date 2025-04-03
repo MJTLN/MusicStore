@@ -3,7 +3,6 @@ package com.maciejjt.posinventory.admin;
 import com.maciejjt.posinventory.model.dtos.WarehouseLayoutDto;
 import com.maciejjt.posinventory.model.dtos.WarehouseLayoutDtoDetailed;
 import com.maciejjt.posinventory.model.requests.WarehouseLayoutRequest;
-import com.maciejjt.posinventory.service.InventoryService;
 import com.maciejjt.posinventory.service.StorageService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;

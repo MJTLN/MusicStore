@@ -18,7 +18,7 @@ public class SaleRequest {
     private String description;
     private Set<Long> discountIds;
     @NotNull(message = "Sale type must be supplied")
-    private boolean type;
+    private boolean isAggregating;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 }

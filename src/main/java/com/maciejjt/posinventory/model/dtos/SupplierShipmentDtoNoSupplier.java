@@ -10,9 +10,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class SupplierShipmentDto {
+public class SupplierShipmentDtoNoSupplier {
     private Long id;
-    private SupplierDtoWithShipments supplier;
     private LocalDateTime createdAt;
     private LocalDateTime arrivalTime;
     private List<SupplierShipmentItemDto> supplierShipmentItems;

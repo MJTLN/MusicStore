@@ -3,7 +3,6 @@ package com.maciejjt.posinventory.admin;
 import com.maciejjt.posinventory.model.dtos.SupplierShipmentDto;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import com.maciejjt.posinventory.model.requests.SupplierShipmentRequest;
-import com.maciejjt.posinventory.service.InventoryService;
 import com.maciejjt.posinventory.service.SupplierShipmentService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;

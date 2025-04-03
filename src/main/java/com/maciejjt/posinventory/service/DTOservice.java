@@ -3,6 +3,7 @@ package com.maciejjt.posinventory.service;
 import com.maciejjt.posinventory.model.*;
 import com.maciejjt.posinventory.model.api.dtos.ApiProductDto;
 import com.maciejjt.posinventory.model.api.dtos.CartDto;
+import com.maciejjt.posinventory.model.api.dtos.CartDtoItem;
 import com.maciejjt.posinventory.model.api.dtos.PurchaseDto;
 import com.maciejjt.posinventory.model.dtos.*;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
@@ -44,6 +45,7 @@ public class DTOservice {
                 .name(product.getName())
                 .productDetails(productDetailDtos)
                 .discount(discountDto)
+                .price(product.getPrice())
                 .build();
     }
 
@@ -51,11 +53,11 @@ public class DTOservice {
 
         Set<ProductDetailDto> productDetailDtos = buildProductDetailDtos(product.getProductDetails());
 
-        Set<InventoryDto> inventoryDtos = new HashSet<>();
+        Set<IInventoryDto> inventoryDtos = new HashSet<>();
 
         product.getInventories().forEach(
                 inventoryLocation -> inventoryDtos.add(
-                        buildInventoryLocationDto(inventoryLocation))
+                        buildInventoryDtoShort(inventoryLocation))
         );
 
         int totalQuantity = product.getInventories().stream()
@@ -106,6 +108,15 @@ public class DTOservice {
                 .build();
     }
 
+    public InventoryDtoShort buildInventoryDtoShort(Inventory inventory) {
+        return InventoryDtoShort.builder()
+                .id(inventory.getId())
+                .quantity(inventory.getQuantity())
+                .storageId(inventory.getStorage().getId())
+                .storageId(inventory.getStorage().getId())
+                .build();
+    }
+
     public StorageBriefDto buildStorageBriefDto(Storage storage) {
         return StorageBriefDto.builder()
                 .id(storage.getId())
@@ -118,16 +129,7 @@ public class DTOservice {
 
         StorageBriefDto storageBriefDto = buildStorageBriefDto(supplierShipment.getStorage());
 
-        Map<IProductDto, Integer> supplierShipmentItems = new HashMap<>();
-
-        supplierShipment.getSupplierShipmentItems().forEach(item -> supplierShipmentItems.put(
-                ProductListingDto.builder()
-                        .id(item.getProduct().getId())
-                        .label(item.getProduct().getLabel())
-                        .name(item.getProduct().getName())
-                        .build(),
-                item.getQuantity()
-        ));
+        List<SupplierShipmentItemDto> supplierShipmentItems = getSupplierShipmentItemDtos(supplierShipment);
 
         SupplierDtoWithShipments supplier = SupplierDtoWithShipments.builder()
                 .id(supplierShipment.getSupplier().getId())
@@ -150,6 +152,43 @@ public class DTOservice {
                 .build();
     }
 
+    public SupplierShipmentDtoNoSupplier buildShipmentDtoNoSupplier(SupplierShipment supplierShipment) {
+
+        StorageBriefDto storageBriefDto = buildStorageBriefDto(supplierShipment.getStorage());
+
+        List<SupplierShipmentItemDto> supplierShipmentItems = getSupplierShipmentItemDtos(supplierShipment);
+
+        return SupplierShipmentDtoNoSupplier.builder()
+                .id(supplierShipment.getId())
+                .note(supplierShipment.getNote())
+                .status(supplierShipment.getStatus())
+                .createdAt(supplierShipment.getCreatedAt())
+                .arrivalTime(supplierShipment.getArrivalTime())
+                .amount(supplierShipment.getAmount())
+                .storage(storageBriefDto)
+                .supplierShipmentItems(supplierShipmentItems)
+                .build();
+    }
+
+    private List<SupplierShipmentItemDto> getSupplierShipmentItemDtos(SupplierShipment supplierShipment) {
+
+        List<SupplierShipmentItemDto> supplierShipmentItems = new ArrayList<>();
+
+        supplierShipment.getSupplierShipmentItems().forEach(item ->
+                supplierShipmentItems.add(SupplierShipmentItemDto.builder()
+                        .productDto(ProductListingDtoShort.builder()
+                                .id(item.getProduct().getId())
+                                .label(item.getProduct().getLabel())
+                                .name(item.getProduct().getName())
+                                .build())
+                        .quantity(item.getQuantity())
+                        .build()
+                )
+        );
+
+        return supplierShipmentItems;
+    }
+
 
     public StorageDto buildStorageDto(Storage storage, boolean withProducts) {
 
@@ -164,7 +203,7 @@ public class DTOservice {
         if (storage.getInventories() != null) {
             storage.getInventories().forEach(item -> {
                 if (withProducts) {
-                    inventoryLocationDtos.add(buildInventoryLocationDtoWithProduct(item));
+                    inventoryLocationDtos.add(buildInventoryDtoWithProduct(item));
                 } else {
                     inventoryLocationDtos.add(buildInventoryLocationDto(item));
                 }
@@ -176,12 +215,12 @@ public class DTOservice {
                 .type(storage.getType())
                 .address(storage.getAddress())
                 .supplierShipments(supplierShipmentWithListings)
-                .inventoryLocations(inventoryLocationDtos)
+                .inventories(inventoryLocationDtos)
                 .build();
     }
 
 
-    private IInventoryDto buildInventoryLocationDtoWithProduct(Inventory inventory) {
+    private IInventoryDto buildInventoryDtoWithProduct(Inventory inventory) {
 
         SupplierShipment lastShipment = inventory.getSupplierShipments().stream()
                 .filter(shipment -> shipment.getStatus() == ShipmentStatus.COMPLETED)
@@ -268,10 +307,6 @@ public class DTOservice {
 
         category.getChildCategories().forEach(element -> childrenIds.add(element.getId()));
 
-        Set<Long> productIds = new HashSet<>();
-
-        category.getProducts().forEach(product -> productIds.add(product.getId()));
-
         Long parentId = Optional.ofNullable(category.getParentCategory())
                 .map(Category::getId)
                 .orElse(null);
@@ -281,7 +316,6 @@ public class DTOservice {
                 .name(category.getName())
                 .parentId(parentId)
                 .childrenIds(childrenIds)
-                .productIds(productIds)
                 .build();
     }
 
@@ -307,7 +341,9 @@ public class DTOservice {
                 .UPC(product.getUPC())
                 .description(product.getDescription())
                 .descriptionShort(product.getDescriptionShort())
-                .discount(buildDiscountDto(product.getDiscount()))
+                .discount(Optional.ofNullable(product.getDiscount())
+                        .map(this::buildDiscountDto)
+                        .orElse(null))
                 .productDetails(buildProductDetailDtos(product.getProductDetails()))
                 .label(product.getLabel())
                 .build();
@@ -315,11 +351,11 @@ public class DTOservice {
 
     public SupplierDtoWithShipments buildSupplierDtoWithShipments(Supplier supplier) {
 
-        Set<SupplierShipmentDto> supplierShipments = new HashSet<>();
+        Set<SupplierShipmentDtoNoSupplier> supplierShipments = new HashSet<>();
 
         if (supplier.getShipments() != null) {
             supplierShipments = supplier.getShipments().stream()
-                    .map(this::buildShipmentWithListingsDto)
+                    .map(this::buildShipmentDtoNoSupplier)
                     .collect(Collectors.toSet());
         }
 
@@ -369,7 +405,8 @@ public class DTOservice {
 
     public StorageMovementItemDto buildStorageMovementItemDto(StorageMovementItem item) {
         return StorageMovementItemDto.builder()
-                .product(buildProductListingDto(item.getProduct()))
+                .id(item.getId())
+                .product(buildProductListingDtoShort(item.getProduct()))
                 .quantity(item.getQuantity())
                 .accepted(item.isAccepted())
                 .build();
@@ -388,14 +425,18 @@ public class DTOservice {
                 .status(storageMovement.getStatus())
                 .movementItems(storageMovementItemDtos)
                 .note(storageMovement.getNote())
+                .shipmentStatus(storageMovement.getShipmentStatus())
                 .build();
     }
 
     public CartDto buildCartDto(Cart cart) {
-        Map<ProductListingDtoShort, Integer> products = new HashMap<>();
-        cart.getProducts().forEach(cartProduct -> products.put(
-                buildProductListingDtoShort(cartProduct.getProduct()),
-                cartProduct.getQuantity()));
+        List<CartDtoItem> products = new ArrayList<>();
+        cart.getProducts().forEach(cartProduct ->
+                products.add(CartDtoItem.builder()
+                            .product(buildProductListingDtoShort(cartProduct.getProduct()))
+                            .Quantity(cartProduct.getQuantity())
+                            .build())
+                );
         return CartDto.builder()
                 .id(cart.getId())
                 .products(products)

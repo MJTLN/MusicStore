@@ -10,17 +10,17 @@ import com.maciejjt.posinventory.service.AuthService;
 import com.maciejjt.posinventory.service.CustomUserDetails;
 import com.maciejjt.posinventory.service.PurchaseService;
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Set;
 
 @RestController
 @Data
 @RequestMapping("/purchase")
-public class PurchaseController {
+public class ApiPurchaseController {
 
     private final PurchaseService purchaseService;
     private final UserRepository userRepository;
@@ -47,9 +47,11 @@ public class PurchaseController {
     }
 
     @GetMapping("/history")
-    private ResponseEntity<Set<PurchaseDto>> getUserPurchases(Authentication authentication) {
+    private ResponseEntity<Page<PurchaseDto>> getUserPurchases(Authentication authentication,
+                                                               @RequestParam int page,
+                                                               @RequestParam int size) {
         User user = findUser(authentication);
-        return ResponseEntity.ok(purchaseService.getUserPurchases(user));
+        return ResponseEntity.ok(purchaseService.getUserPurchases(user, page, size));
     }
 
     private User findUser(Authentication authentication) {

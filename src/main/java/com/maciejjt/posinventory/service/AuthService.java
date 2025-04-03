@@ -32,12 +32,11 @@ public class AuthService {
                         .build()
         );
 
-        Cart cart = cartRepository.save(Cart.builder()
+        cartRepository.save(Cart.builder()
                 .user(user)
                 .build()
         );
 
-        user.setCart(cart);
         userRepository.save(user);
     }
 }

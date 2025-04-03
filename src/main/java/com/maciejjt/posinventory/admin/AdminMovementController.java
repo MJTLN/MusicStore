@@ -5,7 +5,6 @@ import com.maciejjt.posinventory.model.dtos.StorageMovementDto;
 import com.maciejjt.posinventory.model.enums.ShipmentStatus;
 import com.maciejjt.posinventory.model.requests.PositionRequest;
 import com.maciejjt.posinventory.model.requests.StorageMovementRequest;
-import com.maciejjt.posinventory.service.InventoryService;
 import com.maciejjt.posinventory.service.StorageMovementService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;

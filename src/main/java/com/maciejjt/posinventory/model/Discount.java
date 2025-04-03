@@ -17,7 +17,7 @@ public class Discount {
     private Long id;
     private boolean isFixedValue;
     private boolean active;
-    private Long amount;
+    private Integer amount;
     @OneToOne(mappedBy = "discount")
     private Product product;
     private String name;

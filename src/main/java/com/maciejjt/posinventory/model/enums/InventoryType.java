@@ -1,5 +1,5 @@
 package com.maciejjt.posinventory.model.enums;
 
-public enum InventoryLocationType {
+public enum InventoryType {
     STORE,WAREHOUSE
 }

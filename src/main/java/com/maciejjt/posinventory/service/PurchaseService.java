@@ -15,12 +15,14 @@ import com.maciejjt.posinventory.model.warehouse.Position;
 import com.maciejjt.posinventory.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.Data;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -181,9 +183,14 @@ public class PurchaseService {
         return purchaseIssueRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Issue not found with id " + id));
     }
 
-    public Set<PurchaseDto> getUserPurchases(User user) {
-        return user.getPurchases().stream()
-                .map(dtOservice::buildPurchaseDto)
-                .collect(Collectors.toSet());
+    public Page<PurchaseDto> getUserPurchases(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Purchase> purchases = purchaseRepository.findPurchasesByUser(user, pageable);
+
+        if (purchases.isEmpty()) {
+           throw new EntityNotFoundException("No purchases found for the user with email " + user.getEmail());
+        }
+
+        return purchases.map(dtOservice::buildPurchaseDto);
     }
 }

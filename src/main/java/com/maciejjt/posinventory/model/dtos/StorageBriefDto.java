@@ -1,6 +1,6 @@
 package com.maciejjt.posinventory.model.dtos;
 
-import com.maciejjt.posinventory.model.enums.InventoryLocationType;
+import com.maciejjt.posinventory.model.enums.InventoryType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class StorageBriefDto {
     private Long id;
-    private InventoryLocationType type;
+    private InventoryType type;
     private String address;
 }
 

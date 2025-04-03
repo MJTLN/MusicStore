@@ -16,7 +16,7 @@ public class DiscountRequest {
     @NotNull(message = "Must specify if discount is fixed value or percentage based")
     private boolean isFixedValue;
     @NotNull(message = "Amount cannot be null")
-    private Long amount;
+    private Integer amount;
     private LocalDateTime startDate;
     private Long saleId;
     private LocalDateTime endDate;

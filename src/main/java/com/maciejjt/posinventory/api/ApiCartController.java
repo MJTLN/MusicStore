@@ -6,7 +6,6 @@ import com.maciejjt.posinventory.model.api.dtos.CartDto;
 import com.maciejjt.posinventory.repository.UserRepository;
 import com.maciejjt.posinventory.service.CartService;
 import com.maciejjt.posinventory.service.CustomUserDetails;
-import com.maciejjt.posinventory.service.ProductService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

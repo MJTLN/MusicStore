@@ -92,7 +92,8 @@ public class StorageMovementService {
     }
 
     public StorageMovementDto getMovementById(Long movementId) {
-        return dtoService.buildStorageMovementDto(findStorageMovementById(movementId));
+        return dtoService.buildStorageMovementDto(storageMovementRepository.findStorageMovementWithProductsById(movementId)
+                .orElseThrow(() -> new EntityNotFoundException("Storage movement not found with id " + movementId)));
     }
 
     @Transactional

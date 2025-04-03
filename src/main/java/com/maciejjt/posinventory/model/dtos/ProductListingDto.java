@@ -4,6 +4,7 @@ import com.maciejjt.posinventory.model.enums.ProductLabel;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Data
@@ -14,4 +15,5 @@ public class ProductListingDto implements IProductDto{
     private Set<ProductDetailDto> productDetails;
     private DiscountDto discount;
     private Set<ProductLabel> label;
+    private BigDecimal price;
 }

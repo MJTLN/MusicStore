@@ -76,7 +76,8 @@ public class SupplierShipmentService {
 
     public SupplierShipmentDto getShipmentWithListings(Long id) {
 
-        SupplierShipment supplierShipment = findSupplierShipmentById(id);
+        SupplierShipment supplierShipment = shipmentRepository.findSupplierShipmentWListingsById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Suppler shipment not found with id " + id));
 
         return dtoService.buildShipmentWithListingsDto(supplierShipment);
     }

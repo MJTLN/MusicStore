@@ -2,6 +2,7 @@ package com.maciejjt.posinventory.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.Set;
 
@@ -20,6 +21,7 @@ public class Category {
     @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID")
     private Category parentCategory;
     @OneToMany(mappedBy = "parentCategory")
+    @BatchSize(size = 20)
     private Set<Category> childCategories;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -28,4 +30,5 @@ public class Category {
             inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID")
     )
     private Set<Product> products;
+
 }

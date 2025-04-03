@@ -27,7 +27,7 @@ public class CartService {
     @Transactional
     public void addToCart(Long productId, Integer quantity, User user) {
 
-        Cart cart = user.getCart();
+        Cart cart = findCartByUser(user);
 
         Optional<CartProduct> existingCartProduct = cart.getProducts().stream()
                 .filter(cartProduct -> cartProduct.getProduct().getId().equals(productId))
@@ -56,14 +56,14 @@ public class CartService {
     }
 
     public CartDto getCartByUser(User user) {
-        Cart cart = user.getCart();
+        Cart cart = findCartByUser(user);
         return dtoService.buildCartDto(cart);
     }
 
     @Transactional
     public void updateCartProductQuantity(Long productId, boolean addOrRemove, Integer quantity, User user) {
 
-        Cart cart = user.getCart();
+        Cart cart = findCartByUser(user);
         Optional<CartProduct> cartProduct = cart.getProducts().stream()
                 .filter(entry -> entry.getProduct().getId().equals(productId))
                 .findFirst();
@@ -83,7 +83,7 @@ public class CartService {
 
     @Transactional
     public void deleteProductFromCart(Long productId, User user) {
-        Cart cart = user.getCart();
+        Cart cart = findCartByUser(user);
         Optional<CartProduct> cartProduct = cart.getProducts().stream()
                 .filter(entry -> entry.getProduct().getId().equals(productId))
                 .findFirst();
@@ -97,5 +97,9 @@ public class CartService {
 
     public Product findProductById(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id " + id));
+    }
+
+    public Cart findCartByUser(User user) {
+        return cartRepository.findCartByUser(user).orElseThrow(() -> new EntityNotFoundException("No cart found for user with id " + user.getId()));
     }
 }

@@ -6,10 +6,9 @@ import com.maciejjt.posinventory.model.requests.ProductSearchRequest;
 import com.maciejjt.posinventory.service.ProductService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Data
@@ -23,8 +22,24 @@ public class ApiProductController {
         return ResponseEntity.ok(productService.findApiProductById(id));
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<ProductListingDto>> getProductListingsByCategory(
+            @PathVariable Long categoryId, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(productService.findProductListingsByCategory(categoryId, page, size));
+    }
+
     @PostMapping("/search")
-    public ResponseEntity<List<ProductListingDto>> searchProducts(@RequestBody ProductSearchRequest productSearchRequest) {
-        return ResponseEntity.ok(productService.findProductListingsByDetails(productSearchRequest));
+    public ResponseEntity<Page<ProductListingDto>> searchProducts(@RequestBody ProductSearchRequest productSearchRequest,
+                                                                  @RequestParam int page,
+                                                                  @RequestParam int size) {
+        return ResponseEntity.ok(productService.findProductListingsByDetails(productSearchRequest, page, size));
+    }
+
+    @PostMapping("/search/listings")
+    public ResponseEntity<Page<ProductListingDto>> searchProductsListings(@org.springframework.web.bind.annotation.RequestBody ProductSearchRequest productSearchRequest,
+                                                                          @RequestParam int page,
+                                                                          @RequestParam int size) {
+        return ResponseEntity.ok(productService.findProductListingsByDetails(productSearchRequest, page, size));
     }
 }

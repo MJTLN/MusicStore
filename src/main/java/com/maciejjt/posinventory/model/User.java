@@ -24,11 +24,9 @@ public class User {
     private String phone;
     private String email;
     private Role role;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Address> addresses;
     @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Purchase> purchases;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private Cart cart;
 }

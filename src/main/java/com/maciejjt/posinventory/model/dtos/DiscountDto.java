@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class DiscountDto {
     private Long id;
     private boolean isFixedAmount;
-    private Long amount;
+    private Integer amount;
     private String name;
     private Long saleId;
     private LocalDateTime startDate;

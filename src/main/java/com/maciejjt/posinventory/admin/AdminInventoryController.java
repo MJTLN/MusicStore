@@ -44,6 +44,6 @@ public class   AdminInventoryController {
 
     @GetMapping("/{inventoryId}/positions")
     public ResponseEntity<Set<PositionDto>> getPositionsForInventory(@PathVariable Long inventoryId) {
-        return ResponseEntity.ok(inventoryService.storageService.getPositionsForInventory(inventoryId ));
+        return ResponseEntity.ok(inventoryService.getPositionsForInventory(inventoryId));
     }
 }

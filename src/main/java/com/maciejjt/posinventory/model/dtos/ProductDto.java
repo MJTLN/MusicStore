@@ -18,7 +18,7 @@ public class ProductDto implements IProductDto {
      private LocalDateTime createdAt;
      private LocalDateTime updatedAt;
      private Set<ProductDetailDto> productDetails;
-     private Set<InventoryDto> inventories;
+     private Set<IInventoryDto> inventories;
      private DiscountDto discount;
      private Set<ProductLabel> label;
      private Integer totalQuantity;

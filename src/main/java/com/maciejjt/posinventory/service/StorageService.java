@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -41,13 +40,6 @@ public class StorageService {
     public WarehouseLayoutDto getWarehouseLayoutForStorage(Long storageId) {
         Storage storage = findStorageById(storageId);
         return dtoService.buildWarehouseLayoutDto(storage.getWarehouseLayout());
-    }
-
-    public Set<PositionDto> getPositionsForInventory(Long inventoryId) {
-        Inventory inventory = findInventoryById(inventoryId);
-        return inventory.getPositions().stream()
-                .map(dtoService::buildPositionDto)
-                .collect(Collectors.toSet());
     }
 
     @Transactional
@@ -109,26 +101,20 @@ public class StorageService {
     public void putProductsOnRack(Long rackId, Long inventoryId, Integer quantity) {
         Rack rack = findRackById(rackId);
         Integer dividedQuantity = quantity/rack.getShelves().size();
-        rack.getShelves().forEach( shelf -> {
-            putProductOnShelf(shelf, inventoryId, dividedQuantity);
-        });
+        rack.getShelves().forEach( shelf -> putProductOnShelf(shelf, inventoryId, dividedQuantity));
     }
 
     @Transactional
     public void putProductOnShelf(Shelf shelf, Long inventoryId, Integer quantity) {
         Integer dividedQuantity = quantity/shelf.getPositions().size();
-        shelf.getPositions().forEach( position -> {
-            putProductOnPosition(position, inventoryId, dividedQuantity);
-        });
+        shelf.getPositions().forEach( position -> putProductOnPosition(position, inventoryId, dividedQuantity));
     }
 
     @Transactional
     public void putProductsOnShelf(Long shelfId, Long inventoryId, Integer quantity) {
         Shelf shelf = findShelfById(shelfId);
         Integer dividedQuantity = quantity/shelf.getPositions().size();
-        shelf.getPositions().forEach( position -> {
-            putProductOnPosition(position, inventoryId, dividedQuantity);
-        });
+        shelf.getPositions().forEach( position -> putProductOnPosition(position, inventoryId, dividedQuantity));
     }
 
     @Transactional

@@ -11,6 +11,7 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -71,9 +72,9 @@ public class InventoryService {
     }
 
     public InventoryDto getInventoryById(Long inventoryId) {
-            return dtOservice.buildInventoryLocationDto(findInventoryById(inventoryId));
+            return dtOservice.buildInventoryLocationDto(inventoryRepository.findInventoryWithShipmentsById(inventoryId)
+                    .orElseThrow(() -> new EntityNotFoundException("Inventory not found with id: " + inventoryId)));
     }
-
 
     @Transactional
     public InventoryDto updateInventory(Long inventoryId, InventoryRequest inventoryRequest) {
@@ -85,6 +86,13 @@ public class InventoryService {
                 inventory.setQuantity(inventoryRequest.getQuantity());
                 return dtOservice.buildInventoryLocationDto(inventoryRepository.save(inventory));
 
+    }
+
+    public Set<PositionDto> getPositionsForInventory(Long inventoryId) {
+        Inventory inventory = findInventoryById(inventoryId);
+        return inventory.getPositions().stream()
+                .map(dtOservice::buildPositionDto)
+                .collect(Collectors.toSet());
     }
 
     public void deleteInventoryById(Long id) {

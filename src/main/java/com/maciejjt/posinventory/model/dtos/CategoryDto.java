@@ -11,6 +11,5 @@ public class CategoryDto {
     private String name;
     private Long parentId;
     private Set<Long> childrenIds;
-    private Set<Long> productIds;
 }
 

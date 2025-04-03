@@ -297,10 +297,6 @@
                 referencedTableName="category" referencedColumnNames="id"
                 constraintName="fk_category_product_category"/>
 
-        <addForeignKeyConstraint
-                baseTableName="category_product" baseColumnNames="product_id"
-                referencedTableName="product" referencedColumnNames="id"
-                constraintName="fk_category_product_product"/>
 
         <createTable tableName="PURCHASE_PRODUCTS">
             <column name="PURCHASE_ID" type="INTEGER"/>
